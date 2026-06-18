@@ -1,11 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { Truck, Tag, ShieldCheck, Package, MapPin, ArrowRight } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Search } from "lucide-react";
 import { listProducts } from "@/lib/products.functions";
 import { ProductCard } from "@/components/product-card";
-import { WhatsAppCTA } from "@/components/whatsapp-button";
-import { SITE, genericOrderMessage } from "@/lib/site";
-import heroImg from "@/assets/hero-water.jpg";
+import { SITE, GROUPS, productGroup, type GroupKey } from "@/lib/site";
 
 const productsQO = queryOptions({
   queryKey: ["products"],
@@ -15,121 +14,135 @@ const productsQO = queryOptions({
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: `${SITE.brand} — Fast Water Delivery in Ben Arous` },
-      { name: "description", content: "Order bottled water, sparkling water and soft drinks on WhatsApp. Same-day home & business delivery." },
-      { property: "og:title", content: `${SITE.brand} — Fast Water Delivery` },
-      { property: "og:description", content: "Order bottled water on WhatsApp. Same-day delivery in Ben Arous." },
+      { title: `${SITE.brand} — Livraison d'eau à Ben Arous` },
+      {
+        name: "description",
+        content:
+          "Commandez de l'eau, des boissons gazeuses et des jus. Livraison rapide à domicile et au bureau à Ben Arous.",
+      },
+      { property: "og:title", content: `${SITE.brand} — Livraison rapide` },
+      {
+        property: "og:description",
+        content: "Commandez en ligne. Livraison le jour même à Ben Arous.",
+      },
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(productsQO),
-  component: Index,
+  component: Home,
 });
 
-function Index() {
+type Filter = "all" | GroupKey;
+
+function Home() {
   const { data: products } = useSuspenseQuery(productsQO);
-  const featured = products.filter((p) => p.featured).slice(0, 8);
+  const [q, setQ] = useState("");
+  const [filter, setFilter] = useState<Filter>("all");
+
+  const grouped = useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    const map: Record<GroupKey, typeof products> = {
+      water: [],
+      sodas: [],
+      juice: [],
+    };
+    for (const p of products) {
+      const g = productGroup(p);
+      if (filter !== "all" && filter !== g) continue;
+      if (needle) {
+        const hay = `${p.name} ${p.size}`.toLowerCase();
+        if (!hay.includes(needle)) continue;
+      }
+      map[g].push(p);
+    }
+    return map;
+  }, [products, q, filter]);
+
+  const totalShown = grouped.water.length + grouped.sodas.length + grouped.juice.length;
 
   return (
-    <>
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <img
-            src={heroImg}
-            alt=""
-            width={1600}
-            height={900}
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--ocean)]/85 via-[var(--ocean)]/70 to-primary/30" />
-        </div>
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:py-28 lg:py-36">
-          <div className="max-w-2xl text-primary-foreground">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-medium backdrop-blur">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--whatsapp)]" />
-              Delivering today in Ben Arous
-            </span>
-            <h1 className="mt-5 text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
-              Fast Water Delivery in Your Area
-            </h1>
-            <p className="mt-4 max-w-xl text-base text-white/90 sm:text-lg">
-              Order bottled water and beverages with home or business delivery. Simple, fast, and trusted by your neighbors.
-            </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <WhatsAppCTA message={genericOrderMessage} className="!px-6 !py-3.5 !text-base">
-                Order on WhatsApp
-              </WhatsAppCTA>
-              <Link
-                to="/products"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/95 px-6 py-3.5 text-base font-semibold text-[var(--ocean)] transition hover:bg-white"
+    <section className="mx-auto max-w-6xl px-4 py-6 sm:py-10">
+      <header className="mb-5">
+        <h1 className="text-2xl font-extrabold sm:text-3xl">Notre catalogue</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Ajoutez vos produits au panier, puis envoyez votre commande sur WhatsApp.
+        </p>
+      </header>
+
+      {/* Search + filters sticky */}
+      <div className="sticky top-16 z-30 -mx-4 mb-6 border-y border-border/60 bg-background/90 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:rounded-2xl sm:border sm:p-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Rechercher un produit…"
+              className="w-full rounded-xl border border-input bg-background py-2.5 pl-10 pr-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/30"
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Chip active={filter === "all"} onClick={() => setFilter("all")}>
+              Tout
+            </Chip>
+            {GROUPS.map((g) => (
+              <Chip
+                key={g.key}
+                active={filter === g.key}
+                onClick={() => setFilter(g.key)}
               >
-                View Products <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
+                {g.label}
+              </Chip>
+            ))}
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Why choose us */}
-      <section className="mx-auto max-w-6xl px-4 py-14">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { icon: Truck, title: "Fast delivery", desc: "Same-day delivery whenever possible." },
-            { icon: Tag, title: "Best prices", desc: "Transparent, fair prices in TND." },
-            { icon: ShieldCheck, title: "Trusted supplier", desc: "Years of service in Ben Arous." },
-            { icon: Package, title: "Bulk orders", desc: "Special pricing for offices & events." },
-          ].map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="rounded-2xl border border-border/60 bg-card p-5 shadow-card">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-primary">
-                <Icon className="h-5 w-5" />
+      {totalShown === 0 && (
+        <p className="py-16 text-center text-muted-foreground">Aucun produit trouvé.</p>
+      )}
+
+      <div className="space-y-10">
+        {GROUPS.map((g) =>
+          grouped[g.key].length === 0 ? null : (
+            <section key={g.key} id={g.key} className="scroll-mt-32">
+              <h2 className="mb-4 flex items-baseline gap-3 text-xl font-bold sm:text-2xl">
+                {g.label}
+                <span className="text-xs font-medium text-muted-foreground">
+                  {grouped[g.key].length} produits
+                </span>
+              </h2>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+                {grouped[g.key].map((p) => (
+                  <ProductCard key={p.id} p={p} />
+                ))}
               </div>
-              <h3 className="mt-4 font-semibold">{title}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+            </section>
+          ),
+        )}
+      </div>
+    </section>
+  );
+}
 
-      {/* Featured products */}
-      <section className="mx-auto max-w-6xl px-4 py-6">
-        <div className="mb-6 flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold sm:text-3xl">Featured products</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Popular picks ready for delivery today.</p>
-          </div>
-          <Link to="/products" className="hidden text-sm font-semibold text-primary hover:underline sm:inline">
-            All products →
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-          {featured.map((p) => (
-            <ProductCard key={p.id} p={p} />
-          ))}
-        </div>
-      </section>
-
-      {/* Delivery areas */}
-      <section className="mx-auto mt-14 max-w-6xl px-4">
-        <div className="overflow-hidden rounded-3xl bg-gradient-hero p-8 text-primary-foreground sm:p-12">
-          <div className="grid items-center gap-6 sm:grid-cols-[1fr_auto]">
-            <div>
-              <div className="flex items-center gap-2 text-sm font-medium opacity-90">
-                <MapPin className="h-4 w-4" /> Delivery areas
-              </div>
-              <h2 className="mt-2 text-2xl font-bold sm:text-3xl">We deliver across Ben Arous</h2>
-              <p className="mt-2 text-white/85">
-                {SITE.areas.join(" · ")}
-              </p>
-            </div>
-            <WhatsAppCTA
-              message={genericOrderMessage}
-              className="!bg-white !text-[var(--ocean)] hover:!opacity-95"
-            >
-              Order Now
-            </WhatsAppCTA>
-          </div>
-        </div>
-      </section>
-    </>
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
+        active
+          ? "bg-primary text-primary-foreground shadow-soft"
+          : "bg-secondary text-secondary-foreground hover:bg-accent"
+      }`}
+    >
+      {children}
+    </button>
   );
 }

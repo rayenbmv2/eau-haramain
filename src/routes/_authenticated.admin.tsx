@@ -14,7 +14,7 @@ import {
 import { CATEGORY_LABELS } from "@/lib/site";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Admin — Products" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Admin — Produits" }, { name: "robots", content: "noindex" }] }),
   component: AdminPage,
 });
 
@@ -89,9 +89,9 @@ function AdminPage() {
   if (!isAdmin) {
     return (
       <div className="mx-auto max-w-md px-4 py-16 text-center">
-        <h1 className="text-xl font-bold">No admin access</h1>
+        <h1 className="text-xl font-bold">Accès refusé</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Your account exists but doesn't have admin privileges yet.
+          Votre compte n'a pas les droits administrateur.
         </p>
       </div>
     );
@@ -101,15 +101,15 @@ function AdminPage() {
     <section className="mx-auto max-w-6xl px-4 py-10">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold sm:text-3xl">Admin · Products</h1>
-          <p className="text-sm text-muted-foreground">Add, edit and remove products.</p>
+          <h1 className="text-2xl font-bold sm:text-3xl">Admin · Produits</h1>
+          <p className="text-sm text-muted-foreground">Ajouter, modifier et supprimer des produits.</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => setEditing({ ...empty })}
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-95"
           >
-            <Plus className="h-4 w-4" /> New product
+            <Plus className="h-4 w-4" /> Nouveau produit
           </button>
           <button
             onClick={async () => {
@@ -118,7 +118,7 @@ function AdminPage() {
             }}
             className="inline-flex items-center gap-2 rounded-xl border border-input px-4 py-2.5 text-sm font-medium"
           >
-            <LogOut className="h-4 w-4" /> Sign out
+            <LogOut className="h-4 w-4" /> Déconnexion
           </button>
         </div>
       </div>
@@ -127,12 +127,12 @@ function AdminPage() {
         <table className="w-full text-sm">
           <thead className="bg-secondary/60 text-left text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
-              <th className="px-4 py-3">Name</th>
-              <th className="px-4 py-3">Size</th>
-              <th className="px-4 py-3">Category</th>
-              <th className="px-4 py-3">Price (TND)</th>
-              <th className="px-4 py-3">Featured</th>
-              <th className="px-4 py-3">Sort</th>
+              <th className="px-4 py-3">Nom</th>
+              <th className="px-4 py-3">Format</th>
+              <th className="px-4 py-3">Catégorie</th>
+              <th className="px-4 py-3">Prix (TND)</th>
+              <th className="px-4 py-3">Mis en avant</th>
+              <th className="px-4 py-3">Tri</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -143,7 +143,7 @@ function AdminPage() {
                 <td className="px-4 py-3">{p.size}</td>
                 <td className="px-4 py-3 text-muted-foreground">{CATEGORY_LABELS[p.category]}</td>
                 <td className="px-4 py-3 font-semibold text-primary">{Number(p.price_tnd).toFixed(3)}</td>
-                <td className="px-4 py-3">{p.featured ? "Yes" : "—"}</td>
+                <td className="px-4 py-3">{p.featured ? "Oui" : "—"}</td>
                 <td className="px-4 py-3">{p.sort_order}</td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-1">
@@ -161,16 +161,16 @@ function AdminPage() {
                         })
                       }
                       className="rounded-lg p-2 hover:bg-accent"
-                      aria-label="Edit"
+                      aria-label="Modifier"
                     >
                       <Pencil className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => {
-                        if (confirm(`Delete "${p.name} ${p.size}"?`)) delMut.mutate(p.id);
+                        if (confirm(`Supprimer « ${p.name} ${p.size} » ?`)) delMut.mutate(p.id);
                       }}
                       className="rounded-lg p-2 text-destructive hover:bg-destructive/10"
-                      aria-label="Delete"
+                      aria-label="Supprimer"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -185,7 +185,7 @@ function AdminPage() {
       {editing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 px-4">
           <div className="w-full max-w-md rounded-2xl bg-card p-6 shadow-soft">
-            <h2 className="text-lg font-bold">{editing.id ? "Edit product" : "New product"}</h2>
+            <h2 className="text-lg font-bold">{editing.id ? "Modifier le produit" : "Nouveau produit"}</h2>
             <form
               className="mt-4 space-y-3"
               onSubmit={(e) => {
@@ -193,7 +193,7 @@ function AdminPage() {
                 saveMut.mutate(editing);
               }}
             >
-              <Field label="Name">
+              <Field label="Nom">
                 <input
                   required
                   value={editing.name}
@@ -201,7 +201,7 @@ function AdminPage() {
                   className="input"
                 />
               </Field>
-              <Field label="Size">
+              <Field label="Format">
                 <input
                   required
                   value={editing.size}
@@ -209,7 +209,7 @@ function AdminPage() {
                   className="input"
                 />
               </Field>
-              <Field label="Category">
+              <Field label="Catégorie">
                 <select
                   value={editing.category}
                   onChange={(e) => setEditing({ ...editing, category: e.target.value as any })}
@@ -221,7 +221,7 @@ function AdminPage() {
                 </select>
               </Field>
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Price (TND)">
+                <Field label="Prix (TND)">
                   <input
                     type="number"
                     step="0.001"
@@ -232,7 +232,7 @@ function AdminPage() {
                     className="input"
                   />
                 </Field>
-                <Field label="Sort order">
+                <Field label="Ordre de tri">
                   <input
                     type="number"
                     value={editing.sort_order}
@@ -241,7 +241,7 @@ function AdminPage() {
                   />
                 </Field>
               </div>
-              <Field label="Image URL (optional)">
+              <Field label="URL de l'image (optionnel)">
                 <input
                   value={editing.image_url}
                   onChange={(e) => setEditing({ ...editing, image_url: e.target.value })}
@@ -255,7 +255,7 @@ function AdminPage() {
                   checked={editing.featured}
                   onChange={(e) => setEditing({ ...editing, featured: e.target.checked })}
                 />
-                Featured on home page
+                Mettre en avant
               </label>
               {saveMut.error && (
                 <p className="text-sm text-destructive">{(saveMut.error as Error).message}</p>
@@ -266,14 +266,14 @@ function AdminPage() {
                   onClick={() => setEditing(null)}
                   className="rounded-xl border border-input px-4 py-2 text-sm"
                 >
-                  Cancel
+                  Annuler
                 </button>
                 <button
                   type="submit"
                   disabled={saveMut.isPending}
                   className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
                 >
-                  {saveMut.isPending ? "Saving…" : "Save"}
+                  {saveMut.isPending ? "Enregistrement…" : "Enregistrer"}
                 </button>
               </div>
             </form>
