@@ -6,7 +6,7 @@ import { Droplet } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Admin Login" },
+      { title: "Connexion admin" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -45,7 +45,7 @@ function AuthPage() {
       }
       navigate({ to: "/admin" });
     } catch (err: any) {
-      setError(err.message ?? "Authentication failed");
+      setError(err.message ?? "Échec de l'authentification");
     } finally {
       setLoading(false);
     }
@@ -59,8 +59,8 @@ function AuthPage() {
             <Droplet className="h-5 w-5" />
           </span>
           <div>
-            <h1 className="text-xl font-bold">Admin {mode === "signup" ? "Sign Up" : "Login"}</h1>
-            <p className="text-xs text-muted-foreground">Manage products and prices</p>
+            <h1 className="text-xl font-bold">Admin · {mode === "signup" ? "Inscription" : "Connexion"}</h1>
+            <p className="text-xs text-muted-foreground">Gérer les produits et les prix</p>
           </div>
         </div>
 
@@ -76,7 +76,7 @@ function AuthPage() {
             />
           </div>
           <div>
-            <label className="text-sm font-medium">Password</label>
+            <label className="text-sm font-medium">Mot de passe</label>
             <input
               type="password"
               required
@@ -92,7 +92,7 @@ function AuthPage() {
             disabled={loading}
             className="w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-95 disabled:opacity-60"
           >
-            {loading ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}
+            {loading ? "Veuillez patienter…" : mode === "signup" ? "Créer le compte" : "Se connecter"}
           </button>
         </form>
 
@@ -101,11 +101,11 @@ function AuthPage() {
           className="mt-5 w-full text-center text-xs text-muted-foreground hover:text-foreground"
         >
           {mode === "signin"
-            ? "First admin? Create an account →"
-            : "Already have an account? Sign in →"}
+            ? "Premier admin ? Créer un compte →"
+            : "Déjà un compte ? Se connecter →"}
         </button>
         <p className="mt-3 text-center text-[11px] text-muted-foreground">
-          The first account becomes the admin automatically.
+          Le premier compte devient automatiquement administrateur.
         </p>
       </div>
     </section>
