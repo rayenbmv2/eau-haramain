@@ -4,9 +4,8 @@ import { useState } from "react";
 import { SITE } from "@/lib/site";
 
 const nav = [
-  { to: "/", label: "Home" },
-  { to: "/products", label: "Products" },
-  { to: "/delivery", label: "Delivery" },
+  { to: "/", label: "Accueil" },
+  { to: "/delivery", label: "Livraison" },
   { to: "/contact", label: "Contact" },
 ] as const;
 
@@ -22,7 +21,7 @@ export function SiteHeader() {
           <span className="flex flex-col leading-none">
             <span className="font-arabic text-base font-bold text-foreground">{SITE.brand}</span>
             <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
-              Water Delivery
+              Livraison d'eau
             </span>
           </span>
         </Link>
@@ -76,24 +75,24 @@ export function SiteFooter() {
         <div>
           <p className="font-arabic text-lg font-bold">{SITE.brand}</p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Fast water & beverages delivery in Ben Arous and surrounding areas.
+            Livraison rapide d'eau et de boissons à Ben Arous et environs.
           </p>
         </div>
         <div>
           <p className="text-sm font-semibold">Contact</p>
           <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-            <li>WhatsApp: {SITE.phoneDisplay}</li>
-            <li>Phone: {SITE.phoneDisplay}</li>
+            <li>WhatsApp : {SITE.phoneDisplay}</li>
+            <li>Téléphone : {SITE.phoneDisplay}</li>
             <li>{SITE.hours}</li>
           </ul>
         </div>
         <div>
-          <p className="text-sm font-semibold">Delivery areas</p>
+          <p className="text-sm font-semibold">Zones de livraison</p>
           <p className="mt-2 text-sm text-muted-foreground">{SITE.areas.join(" · ")}</p>
         </div>
       </div>
       <div className="border-t border-border/60 py-4 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} {SITE.brand}. All rights reserved.
+        © {new Date().getFullYear()} {SITE.brand}. Tous droits réservés.
       </div>
     </footer>
   );

@@ -1,13 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Phone, Clock, MessageCircle } from "lucide-react";
-import { WhatsAppCTA } from "@/components/whatsapp-button";
-import { SITE, genericOrderMessage } from "@/lib/site";
+import { SITE, waUrl } from "@/lib/site";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Order Water on WhatsApp" },
-      { name: "description", content: "Reach us on WhatsApp or phone to place your water delivery order." },
+      { title: "Contact — Commander sur WhatsApp" },
+      {
+        name: "description",
+        content: "Contactez-nous sur WhatsApp ou par téléphone pour passer votre commande.",
+      },
     ],
   }),
   component: ContactPage,
@@ -16,9 +18,9 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   return (
     <section className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="text-3xl font-bold sm:text-4xl">Contact us</h1>
+      <h1 className="text-3xl font-bold sm:text-4xl">Nous contacter</h1>
       <p className="mt-2 text-muted-foreground">
-        WhatsApp is the fastest way to place your order.
+        WhatsApp est le moyen le plus rapide pour passer commande.
       </p>
 
       <div className="mt-8 space-y-4">
@@ -27,10 +29,17 @@ function ContactPage() {
             <MessageCircle className="h-5 w-5" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold">WhatsApp (preferred)</p>
+            <p className="text-sm font-semibold">WhatsApp (recommandé)</p>
             <p className="mt-0.5 text-base font-medium">{SITE.phoneDisplay}</p>
             <div className="mt-3">
-              <WhatsAppCTA message={genericOrderMessage}>Chat on WhatsApp</WhatsAppCTA>
+              <a
+                href={waUrl("Bonjour, j'ai une question.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl bg-[var(--whatsapp)] px-5 py-3 text-sm font-semibold text-[var(--whatsapp-foreground)] shadow-soft hover:opacity-95"
+              >
+                <MessageCircle className="h-5 w-5" /> Discuter sur WhatsApp
+              </a>
             </div>
           </div>
         </div>
@@ -43,7 +52,7 @@ function ContactPage() {
             <Phone className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-semibold">Phone</p>
+            <p className="text-sm font-semibold">Téléphone</p>
             <p className="mt-0.5 text-base font-medium">{SITE.phoneDisplay}</p>
           </div>
         </a>
@@ -53,7 +62,7 @@ function ContactPage() {
             <Clock className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-semibold">Working hours</p>
+            <p className="text-sm font-semibold">Horaires</p>
             <p className="mt-0.5 text-base font-medium">{SITE.hours}</p>
           </div>
         </div>
