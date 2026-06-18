@@ -21,16 +21,17 @@ type CartState = {
   setCustomer: (c: Partial<Customer>) => void;
 };
 
-const safeStorage = () => {
-  if (typeof window === "undefined") {
-    return {
-      getItem: () => null,
-      setItem: () => {},
-      removeItem: () => {},
-    } as Storage;
-  }
-  return window.localStorage;
+const noopStorage: Storage = {
+  length: 0,
+  clear: () => {},
+  getItem: () => null,
+  key: () => null,
+  removeItem: () => {},
+  setItem: () => {},
 };
+
+const safeStorage = (): Storage =>
+  typeof window === "undefined" ? noopStorage : window.localStorage;
 
 export const useCart = create<CartState>()(
   persist(

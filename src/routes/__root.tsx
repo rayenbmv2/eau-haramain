@@ -12,7 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
-import { FloatingWhatsApp } from "@/components/whatsapp-button";
+import { CartFab } from "@/components/cart-drawer";
 import { SITE } from "@/lib/site";
 
 function NotFoundComponent() {
@@ -112,7 +112,7 @@ function RootComponent() {
           <Outlet />
         </main>
         <SiteFooter />
-        <FloatingWhatsApp />
+        <CartFab />
       </div>
     </QueryClientProvider>
   );
