@@ -12,20 +12,16 @@ export function waUrl(text: string) {
   return `https://wa.me/${SITE.whatsappRaw}?text=${encodeURIComponent(text)}`;
 }
 
-export function productOrderMessage(name: string, size: string, price: number) {
-  return `Hello ${SITE.brand}, I want to order:
-- Product: ${name} — ${size}
-- Price: ${price.toFixed(3)} TND
+export function productOrderMessage(name: string, size: string, _price: number) {
+  return `Hello, I want to order: ${name} ${size}
 - Quantity: 
-- Delivery address: 
-- Phone number: `;
+- Address: `;
 }
 
-export const genericOrderMessage = `Hello ${SITE.brand}, I want to order:
+export const genericOrderMessage = `Hello, I want to order:
 - Product: 
 - Quantity: 
-- Delivery address: 
-- Phone number: `;
+- Address: `;
 
 export const CATEGORY_LABELS: Record<string, string> = {
   water: "Bottled Water",
