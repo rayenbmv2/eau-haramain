@@ -25,18 +25,36 @@ export const CATEGORY_LABELS: Record<string, string> = {
 };
 
 // Top-level groupings shown on the home page
-export type GroupKey = "water" | "sodas" | "juice";
+export type GroupKey = "water" | "drinks";
 export const GROUPS: { key: GroupKey; label: string }[] = [
   { key: "water", label: "Eau" },
-  { key: "sodas", label: "Boissons gazeuses" },
-  { key: "juice", label: "Jus & Punch" },
+  { key: "drinks", label: "Boissons" },
 ];
 
 export function productGroup(p: { name: string; category: string }): GroupKey {
-  const n = p.name.toLowerCase();
-  if (/delio|punch/.test(n)) return "juice";
-  if (p.category === "water") return "water";
-  return "sodas";
+  return p.category === "water" ? "water" : "drinks";
+}
+
+export type WaterSize = "2L" | "1.5L" | "1L" | "0.5L" | "other";
+export const WATER_SIZE_ORDER: WaterSize[] = ["2L", "1.5L", "1L", "0.5L", "other"];
+export const WATER_SIZE_LABEL: Record<WaterSize, string> = {
+  "2L": "2 L",
+  "1.5L": "1,5 L",
+  "1L": "1 L",
+  "0.5L": "0,5 L",
+  other: "Autres formats",
+};
+
+export function waterSizeBucket(size: string): WaterSize {
+  // Normalize: "1,5 L" -> "1.5", "0.5L" -> "0.5", "1 L" -> "1"
+  const m = size.toLowerCase().replace(",", ".").match(/(\d+(?:\.\d+)?)\s*l/);
+  if (!m) return "other";
+  const v = parseFloat(m[1]);
+  if (v === 2) return "2L";
+  if (v === 1.5) return "1.5L";
+  if (v === 1) return "1L";
+  if (v === 0.5) return "0.5L";
+  return "other";
 }
 
 import productWater from "@/assets/product-water.jpg";

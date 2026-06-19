@@ -4,7 +4,16 @@ import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { listProducts } from "@/lib/products.functions";
 import { ProductCard } from "@/components/product-card";
-import { SITE, GROUPS, productGroup, type GroupKey } from "@/lib/site";
+import {
+  SITE,
+  GROUPS,
+  productGroup,
+  type GroupKey,
+  waterSizeBucket,
+  WATER_SIZE_ORDER,
+  WATER_SIZE_LABEL,
+  type WaterSize,
+} from "@/lib/site";
 
 const productsQO = queryOptions({
   queryKey: ["products"],
@@ -18,7 +27,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Commandez de l'eau, des boissons gazeuses et des jus. Livraison rapide à domicile et au bureau à Ben Arous.",
+          "Commandez de l'eau et des boissons. Livraison rapide à domicile et au bureau à Ben Arous.",
       },
       { property: "og:title", content: `${SITE.brand} — Livraison rapide` },
       {
@@ -38,13 +47,10 @@ function Home() {
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
 
-  const grouped = useMemo(() => {
+  const { waterBuckets, drinks, totalShown } = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    const map: Record<GroupKey, typeof products> = {
-      water: [],
-      sodas: [],
-      juice: [],
-    };
+    const water: typeof products = [];
+    const drinks: typeof products = [];
     for (const p of products) {
       const g = productGroup(p);
       if (filter !== "all" && filter !== g) continue;
@@ -52,12 +58,37 @@ function Home() {
         const hay = `${p.name} ${p.size}`.toLowerCase();
         if (!hay.includes(needle)) continue;
       }
-      map[g].push(p);
+      (g === "water" ? water : drinks).push(p);
     }
-    return map;
+    // Group water by size
+    const waterBuckets: Record<WaterSize, typeof products> = {
+      "2L": [],
+      "1.5L": [],
+      "1L": [],
+      "0.5L": [],
+      other: [],
+    };
+    for (const p of water) {
+      waterBuckets[waterSizeBucket(p.size)].push(p);
+    }
+    for (const k of WATER_SIZE_ORDER) {
+      waterBuckets[k].sort((a, b) => Number(a.price_tnd) - Number(b.price_tnd));
+    }
+    drinks.sort(
+      (a, b) =>
+        a.name.localeCompare(b.name) || Number(a.price_tnd) - Number(b.price_tnd),
+    );
+    return {
+      waterBuckets,
+      drinks,
+      totalShown: water.length + drinks.length,
+    };
   }, [products, q, filter]);
 
-  const totalShown = grouped.water.length + grouped.sodas.length + grouped.juice.length;
+  const waterCount = WATER_SIZE_ORDER.reduce(
+    (s, k) => s + waterBuckets[k].length,
+    0,
+  );
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-6 sm:py-10">
@@ -68,7 +99,6 @@ function Home() {
         </p>
       </header>
 
-      {/* Search + filters sticky */}
       <div className="sticky top-16 z-30 -mx-4 mb-6 border-y border-border/60 bg-background/90 px-4 py-3 backdrop-blur sm:static sm:mx-0 sm:rounded-2xl sm:border sm:p-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
@@ -102,22 +132,47 @@ function Home() {
       )}
 
       <div className="space-y-10">
-        {GROUPS.map((g) =>
-          grouped[g.key].length === 0 ? null : (
-            <section key={g.key} id={g.key} className="scroll-mt-32">
-              <h2 className="mb-4 flex items-baseline gap-3 text-xl font-bold sm:text-2xl">
-                {g.label}
-                <span className="text-xs font-medium text-muted-foreground">
-                  {grouped[g.key].length} produits
-                </span>
-              </h2>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-                {grouped[g.key].map((p) => (
-                  <ProductCard key={p.id} p={p} />
-                ))}
-              </div>
-            </section>
-          ),
+        {waterCount > 0 && (
+          <section id="water" className="scroll-mt-32">
+            <h2 className="mb-4 flex items-baseline gap-3 text-xl font-bold sm:text-2xl">
+              Eau
+              <span className="text-xs font-medium text-muted-foreground">
+                {waterCount} produits
+              </span>
+            </h2>
+            <div className="space-y-8">
+              {WATER_SIZE_ORDER.map((k) =>
+                waterBuckets[k].length === 0 ? null : (
+                  <div key={k}>
+                    <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                      {WATER_SIZE_LABEL[k]}
+                    </h3>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+                      {waterBuckets[k].map((p) => (
+                        <ProductCard key={p.id} p={p} />
+                      ))}
+                    </div>
+                  </div>
+                ),
+              )}
+            </div>
+          </section>
+        )}
+
+        {drinks.length > 0 && (
+          <section id="drinks" className="scroll-mt-32">
+            <h2 className="mb-4 flex items-baseline gap-3 text-xl font-bold sm:text-2xl">
+              Boissons
+              <span className="text-xs font-medium text-muted-foreground">
+                {drinks.length} produits
+              </span>
+            </h2>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+              {drinks.map((p) => (
+                <ProductCard key={p.id} p={p} />
+              ))}
+            </div>
+          </section>
         )}
       </div>
     </section>
