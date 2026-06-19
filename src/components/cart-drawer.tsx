@@ -188,29 +188,20 @@ function CartPanel({ onClose }: { onClose: () => void }) {
             <p className="text-[11px] text-muted-foreground">
               Frais de livraison à confirmer sur WhatsApp.
             </p>
-            <div className="grid grid-cols-2 gap-2">
-              <a
-                href={valid ? waUrl(message) : "#"}
-                onClick={order}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`inline-flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-semibold shadow-soft transition ${
-                  valid
-                    ? "bg-[var(--whatsapp)] text-[var(--whatsapp-foreground)] hover:opacity-95"
-                    : "cursor-not-allowed bg-muted text-muted-foreground"
-                }`}
-              >
-                <MessageCircle className="h-4 w-4" />
-                Commander
-              </a>
-              <button
-                onClick={copy}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-input bg-background px-3 py-3 text-sm font-semibold hover:bg-secondary"
-              >
-                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                {copied ? "Copié !" : "Copier"}
-              </button>
-            </div>
+            <a
+              href={valid ? waUrl(message) : "#"}
+              onClick={order}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-base font-semibold shadow-soft transition ${
+                valid
+                  ? "bg-[var(--whatsapp)] text-[var(--whatsapp-foreground)] hover:opacity-95"
+                  : "cursor-not-allowed bg-muted text-muted-foreground"
+              }`}
+            >
+              <MessageCircle className="h-5 w-5" />
+              Commander sur WhatsApp
+            </a>
             {touched && !valid && (
               <p className="text-xs text-destructive">
                 Veuillez remplir nom, téléphone et adresse.
