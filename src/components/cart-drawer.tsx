@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ShoppingBag, X, Trash2, MessageCircle, Copy, Check, Minus, Plus } from "lucide-react";
+import { ShoppingBag, X, Trash2, MessageCircle, Minus, Plus } from "lucide-react";
 import {
   useCart,
   cartTotal,
@@ -59,7 +59,6 @@ function CartPanel({ onClose }: { onClose: () => void }) {
   const customer = useCart((s) => s.customer);
   const setCustomer = useCart((s) => s.setCustomer);
 
-  const [copied, setCopied] = useState(false);
   const [touched, setTouched] = useState(false);
 
   const total = cartTotal(items);
@@ -67,16 +66,6 @@ function CartPanel({ onClose }: { onClose: () => void }) {
     customer.name.trim() && customer.phone.trim() && customer.address.trim() && items.length > 0;
 
   const message = buildOrderMessage(customer, items);
-
-  async function copy() {
-    setTouched(true);
-    if (!valid) return;
-    try {
-      await navigator.clipboard.writeText(message);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {}
-  }
 
   function order(e: React.MouseEvent) {
     setTouched(true);
