@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Droplet } from "lucide-react";
 import { listProducts } from "@/lib/products.functions";
 import { ProductCard } from "@/components/product-card";
 import {
@@ -144,7 +144,8 @@ function Home() {
               {WATER_SIZE_ORDER.map((k) =>
                 waterBuckets[k].length === 0 ? null : (
                   <div key={k}>
-                    <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                    <h3 className="mb-4 flex items-center gap-2 border-b border-primary/20 pb-2 text-lg font-bold text-primary sm:text-xl">
+                      <Droplet className="h-5 w-5 fill-primary/20" />
                       {WATER_SIZE_LABEL[k]}
                     </h3>
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
