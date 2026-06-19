@@ -1,45 +1,39 @@
-## Changes
+## 1. Bigger, colored size headers (Eau section)
 
-### 1. Catalogue layout (`src/routes/index.tsx` + `src/lib/site.ts`)
+In `src/routes/index.tsx`, change the size sub-header (currently small grey uppercase `text-muted-foreground`) to a prominent brand-colored heading:
 
-**Top sections — 2 only:**
-- **Eau** (all waters)
-- **Boissons** (sodas + cans + juice + punch combined)
+- Larger font: `text-lg sm:text-xl font-bold`
+- Brand blue color: `text-primary`
+- Small water-drop emoji or icon prefix (Lucide `Droplet`) in the same blue
+- Thin underline border in `border-primary/20` for visual separation
+- Keep the same order (2L → 1.5L → 1L → 0.5L)
 
-Update `GROUPS` to `[{ key: "water", label: "Eau" }, { key: "drinks", label: "Boissons" }]` and adjust `productGroup()` so anything not `category === "water"` returns `"drinks"`. Filter chips reflect the same 2 groups + "Tout".
+No change to the Boissons section.
 
-**Eau sub-sections by size:**
-Inside the Eau section, group products into four sub-blocks with size sub-headers, in this order:
-1. **2L**
-2. **1,5L**
-3. **1L**
-4. **0,5L**
+## 2. Clean product illustrations (one per product)
 
-Within each sub-block, sort products by `price_tnd` ascending (cheapest first).
+Generate a neutral, consistent illustration for **each product** in the catalog — clean bottle/can renders on a soft gradient background, no real brand labels, all matching the same visual style (same camera angle, lighting, shadow) so the grid looks cohesive.
 
-Parsing rule: derive size in liters from `p.size` (handles "2L", "1.5L", "0.5L", "1,5 L", etc. → normalize commas/spaces, parse float). Any water that doesn't match one of the 4 buckets falls into an "Autres formats" sub-block at the bottom.
+**Process:**
+1. Read all products from the DB (`SELECT id, name, size, category FROM products`).
+2. For each product, generate one image with the agent `generate_image` tool:
+   - Water bottles → "clean transparent plastic water bottle, [size] format, soft blue gradient background, studio lighting, product photography style, centered, no label text"
+   - Sodas/cans → "aluminum soda can, [color hint from name e.g. orange for Fanta-like, dark for cola], soft neutral gradient background, studio lighting, no brand text"
+   - Juice bottles → "glass juice bottle, [fruit color hint], soft warm gradient background, studio lighting, no brand text"
+   - Punch → "punch drink bottle, red/pink tones, soft gradient background, studio lighting, no brand text"
+3. Save to `src/assets/products/{id}.jpg`, upload each via `lovable-assets`, get CDN URL.
+4. Bulk-update the `products` table: `UPDATE products SET image_url = '<cdn-url>' WHERE id = '<id>'`.
 
-**Boissons section:** single grid, sorted by name then price ascending (no sub-headers).
+Since `ProductCard` already prefers `p.image_url` over the category fallback, no component change needed.
 
-### 2. Cart — one-tap WhatsApp (`src/components/cart-drawer.tsx`)
-
-- Remove the **Copier** button and the `copied` / `copy()` logic entirely.
-- Footer becomes a single full-width green button **"Commander sur WhatsApp"** that:
-  - validates name / phone / address,
-  - if invalid: shows the existing inline error (no navigation),
-  - if valid: opens `waUrl(message)` in a new tab — message is auto-prefilled, user just taps Send in WhatsApp.
-- Keep the small hint text "Frais de livraison à confirmer sur WhatsApp." and the "Vider le panier" link.
-- Remove unused imports (`Copy`, `Check`, `useState` for copied).
-
-### 3. Out of scope (for now)
-
-- **Product name corrections** — the user said they'll send the corrected list separately. No name edits in this round; once they send the list I'll do a single DB update.
-- No design / color / typography changes.
-- No changes to admin, auth, contact, delivery pages.
+**Out of scope:**
+- No real brand labels (legal/quality issue — illustrations only)
+- No product name corrections (waiting on user's list)
+- No layout/design changes outside the size header
 
 ## Technical notes
 
-- `productGroup` simplification means juice items (Delio / Punch) move into "Boissons" alongside sodas — matches the user's request to keep "water alone, other drinks together".
-- Size parsing kept in `src/lib/site.ts` as a `waterSizeBucket(sizeStr): "2L" | "1.5L" | "1L" | "0.5L" | "other"` helper so it's reusable and testable.
-- Sub-header order is fixed (descending size as the user specified: 2L → 0.5L), not data-driven.
-- No DB migration, no schema change, no new dependencies.
+- Image generation runs in a loop (one tool call per product). For ~20–40 products this is a few minutes of generation time.
+- All images use the same prompt skeleton so the catalog stays visually consistent.
+- If a product is renamed later, the image still fits (it's generic by category + size, not name-specific).
+- Existing category fallback images stay as a safety net for any product that fails to generate.
