@@ -1,39 +1,40 @@
-## 1. Bigger, colored size headers (Eau section)
+## 1. Real product photos (you'll upload)
 
-In `src/routes/index.tsx`, change the size sub-header (currently small grey uppercase `text-muted-foreground`) to a prominent brand-colored heading:
+**How to send them:** Drop the photos into chat (up to 10 per message — send in batches). Name each file so I can match it to the right product+size, e.g.:
+- `pristine-2l.jpg`, `pristine-1.5l.jpg`, `pristine-0.5l.jpg`
+- `safia-1l.jpg`, `marwa-2l.jpg`, `boga-cola-can.jpg`, etc.
 
-- Larger font: `text-lg sm:text-xl font-bold`
-- Brand blue color: `text-primary`
-- Small water-drop emoji or icon prefix (Lucide `Droplet`) in the same blue
-- Thin underline border in `border-primary/20` for visual separation
-- Keep the same order (2L → 1.5L → 1L → 0.5L)
+For each photo I'll:
+- Upload to the CDN (lovable-assets) and set it as that product's `image_url` in the database.
+- Match by filename → product name + size. If a filename doesn't match exactly, I'll ask you before assigning.
+- Fix typos on the matched product name based on what's actually printed on the bottle (e.g. current "Bristine" → "Pristine"). Any other wrong names I spot from the labels, I'll correct the same way.
 
-No change to the Boissons section.
+Send the 2L batch first; we iterate per batch.
 
-## 2. Clean product illustrations (one per product)
+## 2. Stock status (in stock / out of stock)
 
-Generate a neutral, consistent illustration for **each product** in the catalog — clean bottle/can renders on a soft gradient background, no real brand labels, all matching the same visual style (same camera angle, lighting, shadow) so the grid looks cohesive.
+**Database:** add an `in_stock boolean not null default true` column on `products` (migration).
 
-**Process:**
-1. Read all products from the DB (`SELECT id, name, size, category FROM products`).
-2. For each product, generate one image with the agent `generate_image` tool:
-   - Water bottles → "clean transparent plastic water bottle, [size] format, soft blue gradient background, studio lighting, product photography style, centered, no label text"
-   - Sodas/cans → "aluminum soda can, [color hint from name e.g. orange for Fanta-like, dark for cola], soft neutral gradient background, studio lighting, no brand text"
-   - Juice bottles → "glass juice bottle, [fruit color hint], soft warm gradient background, studio lighting, no brand text"
-   - Punch → "punch drink bottle, red/pink tones, soft gradient background, studio lighting, no brand text"
-3. Save to `src/assets/products/{id}.jpg`, upload each via `lovable-assets`, get CDN URL.
-4. Bulk-update the `products` table: `UPDATE products SET image_url = '<cdn-url>' WHERE id = '<id>'`.
+**Admin page (`/admin`):** for each product row, a toggle switch with a colored label
+- ON → green pill "En stock"
+- OFF → red pill "Rupture de stock"
+- Click flips it instantly (optimistic update + server fn).
 
-Since `ProductCard` already prefers `p.image_url` over the category fallback, no component change needed.
+**Shop (home page):** out-of-stock products stay visible but are
+- greyed out (image + text at ~40% opacity, grayscale)
+- show a red "Rupture de stock" badge over the image
+- "Ajouter" button is disabled
+- Cart drawer / qty controls also disabled for that item
 
-**Out of scope:**
-- No real brand labels (legal/quality issue — illustrations only)
-- No product name corrections (waiting on user's list)
-- No layout/design changes outside the size header
+## 3. Real WhatsApp logo on the floating button
+
+Replace the current generic chat icon on the bottom-right floating WhatsApp button with the official WhatsApp glyph (clean white WhatsApp mark on the green circle, matching WhatsApp brand green `#25D366`). I'll generate it as a transparent SVG-style PNG so it stays crisp.
 
 ## Technical notes
+- Migration: `ALTER TABLE public.products ADD COLUMN in_stock boolean not null default true;` (RLS/GRANTs already in place).
+- New server fn `setProductStock({ id, in_stock })` protected by `requireSupabaseAuth` + admin role check, called from the admin toggle.
+- `ProductCard` reads `p.in_stock`; when false → disabled state + red badge + grayscale.
+- Photo workflow per batch: I download the uploaded files, run `lovable-assets create` per file, `UPDATE public.products SET image_url=... WHERE name ILIKE ... AND size=...`. I'll show you the matches before committing.
+- WhatsApp button: swap icon source in the floating button component (likely in `cart-drawer.tsx` or a dedicated component — I'll find it).
 
-- Image generation runs in a loop (one tool call per product). For ~20–40 products this is a few minutes of generation time.
-- All images use the same prompt skeleton so the catalog stays visually consistent.
-- If a product is renamed later, the image still fits (it's generic by category + size, not name-specific).
-- Existing category fallback images stay as a safety net for any product that fails to generate.
+Out of scope: payment/checkout changes, layout changes, new pages.
