@@ -20,7 +20,23 @@ const productSchema = z.object({
   image_url: z.string().nullable().optional(),
   featured: z.boolean(),
   sort_order: z.number().int(),
+  in_stock: z.boolean().optional(),
 });
+
+export const setProductStock = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ id: z.string().uuid(), in_stock: z.boolean() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("products")
+      .update({ in_stock: data.in_stock })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
 
 export const isCurrentUserAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -65,6 +81,7 @@ export const upsertProduct = createServerFn({ method: "POST" })
           image_url: data.image_url ?? null,
           featured: data.featured,
           sort_order: data.sort_order,
+          ...(data.in_stock !== undefined ? { in_stock: data.in_stock } : {}),
         })
         .eq("id", data.id);
       if (error) throw new Error(error.message);

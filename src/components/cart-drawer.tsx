@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { ShoppingBag, X, Trash2, MessageCircle, Minus, Plus } from "lucide-react";
+import { ShoppingBag, X, Trash2, Minus, Plus } from "lucide-react";
+import { WhatsAppIcon } from "@/components/whatsapp-icon";
 import {
   useCart,
   cartTotal,
@@ -42,7 +43,7 @@ export function CartFab() {
             aria-label="Contact WhatsApp"
             className="fixed bottom-5 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--whatsapp)] text-[var(--whatsapp-foreground)] shadow-soft transition hover:scale-110 sm:bottom-7 sm:right-7"
           >
-            <MessageCircle className="h-6 w-6" />
+            <WhatsAppIcon size={28} />
           </a>
         )
       )}
@@ -199,7 +200,7 @@ function CartPanel({ onClose }: { onClose: () => void }) {
                   : "cursor-not-allowed bg-muted text-muted-foreground"
               }`}
             >
-              <MessageCircle className="h-5 w-5" />
+              <WhatsAppIcon size={20} />
               Commander sur WhatsApp
             </a>
             {touched && !valid && (
