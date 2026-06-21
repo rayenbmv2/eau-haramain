@@ -10,6 +10,7 @@ import {
   claimAdminIfNone,
   upsertProduct,
   deleteProduct,
+  setProductStock,
 } from "@/lib/admin.functions";
 import { CATEGORY_LABELS } from "@/lib/site";
 
@@ -46,6 +47,7 @@ function AdminPage() {
   const claim = useServerFn(claimAdminIfNone);
   const save = useServerFn(upsertProduct);
   const del = useServerFn(deleteProduct);
+  const setStock = useServerFn(setProductStock);
 
   const [ready, setReady] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -75,6 +77,11 @@ function AdminPage() {
 
   const delMut = useMutation({
     mutationFn: (id: string) => del({ data: { id } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["products"] }),
+  });
+
+  const stockMut = useMutation({
+    mutationFn: (v: { id: string; in_stock: boolean }) => setStock({ data: v }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["products"] }),
   });
 
@@ -131,18 +138,39 @@ function AdminPage() {
               <th className="px-4 py-3">Format</th>
               <th className="px-4 py-3">Catégorie</th>
               <th className="px-4 py-3">Prix (TND)</th>
+              <th className="px-4 py-3">Stock</th>
               <th className="px-4 py-3">Mis en avant</th>
               <th className="px-4 py-3">Tri</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
           <tbody>
-            {productsQ.data?.map((p) => (
+            {productsQ.data?.map((p) => {
+              const inStock = (p as any).in_stock !== false;
+              return (
               <tr key={p.id} className="border-t border-border/60">
                 <td className="px-4 py-3 font-medium">{p.name}</td>
                 <td className="px-4 py-3">{p.size}</td>
                 <td className="px-4 py-3 text-muted-foreground">{CATEGORY_LABELS[p.category]}</td>
                 <td className="px-4 py-3 font-semibold text-primary">{Number(p.price_tnd).toFixed(3)}</td>
+                <td className="px-4 py-3">
+                  <button
+                    type="button"
+                    onClick={() => stockMut.mutate({ id: p.id, in_stock: !inStock })}
+                    disabled={stockMut.isPending}
+                    className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold transition ${
+                      inStock
+                        ? "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-200"
+                        : "bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/40 dark:text-red-200"
+                    }`}
+                    aria-label="Basculer le stock"
+                  >
+                    <span
+                      className={`h-2 w-2 rounded-full ${inStock ? "bg-green-500" : "bg-red-500"}`}
+                    />
+                    {inStock ? "En stock" : "Rupture"}
+                  </button>
+                </td>
                 <td className="px-4 py-3">{p.featured ? "Oui" : "—"}</td>
                 <td className="px-4 py-3">{p.sort_order}</td>
                 <td className="px-4 py-3">
@@ -177,7 +205,8 @@ function AdminPage() {
                   </div>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>
