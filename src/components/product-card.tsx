@@ -32,13 +32,18 @@ export function ProductCard({ p }: { p: ProductRow }) {
             outOfStock ? "grayscale" : "group-hover:scale-105"
           }`}
         />
-        {outOfStock && (
-          <div className="absolute inset-0 flex items-center justify-center bg-foreground/10">
-            <span className="rounded-full bg-destructive px-3 py-1 text-xs font-bold uppercase tracking-wide text-destructive-foreground shadow-soft">
-              Rupture de stock
-            </span>
-          </div>
-        )}
+        <span
+          className={`absolute left-2 top-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide shadow-soft ${
+            outOfStock
+              ? "bg-destructive text-destructive-foreground"
+              : "bg-emerald-500 text-white"
+          }`}
+        >
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${outOfStock ? "bg-white/90" : "bg-white"}`}
+          />
+          {outOfStock ? "Rupture de stock" : "En stock"}
+        </span>
       </div>
       <div className="flex flex-1 flex-col gap-3 p-3 sm:p-4">
         <div>
