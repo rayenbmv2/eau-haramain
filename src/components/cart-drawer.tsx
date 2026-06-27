@@ -17,6 +17,7 @@ export function CartFab() {
 
   const count = cartCount(items);
   const total = cartTotal(items);
+  const belowMin = count > 0 && count < 10;
 
   return (
     <>
@@ -33,6 +34,12 @@ export function CartFab() {
             </span>
           </span>
           <span className="text-sm font-bold tabular-nums">{total.toFixed(3)} TND</span>
+          {belowMin && (
+            <span className="rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-amber-950">
+              Min 10
+            </span>
+          )}
+
         </button>
       ) : (
         mounted && (
@@ -63,10 +70,19 @@ function CartPanel({ onClose }: { onClose: () => void }) {
   const [touched, setTouched] = useState(false);
 
   const total = cartTotal(items);
+  const count = cartCount(items);
+  const MIN_ITEMS = 10;
+  const missing = Math.max(0, MIN_ITEMS - count);
+  const meetsMin = count >= MIN_ITEMS;
   const valid =
-    customer.name.trim() && customer.phone.trim() && customer.address.trim() && items.length > 0;
+    customer.name.trim() &&
+    customer.phone.trim() &&
+    customer.address.trim() &&
+    items.length > 0 &&
+    meetsMin;
 
   const message = buildOrderMessage(customer, items);
+
 
   function order(e: React.MouseEvent) {
     setTouched(true);
@@ -186,6 +202,22 @@ function CartPanel({ onClose }: { onClose: () => void }) {
                 {total.toFixed(3)} TND
               </span>
             </div>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">Quantité</span>
+              <span
+                className={`font-bold tabular-nums ${
+                  meetsMin ? "text-emerald-600" : "text-amber-600"
+                }`}
+              >
+                {count} / {MIN_ITEMS} minimum
+              </span>
+            </div>
+            {!meetsMin && (
+              <div className="rounded-xl border border-amber-400/50 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+                Commande minimum: {MIN_ITEMS} bouteilles. Ajoutez encore{" "}
+                {missing} article{missing > 1 ? "s" : ""}.
+              </div>
+            )}
             <p className="text-[11px] text-muted-foreground">
               Frais de livraison à confirmer sur WhatsApp.
             </p>
@@ -205,9 +237,12 @@ function CartPanel({ onClose }: { onClose: () => void }) {
             </a>
             {touched && !valid && (
               <p className="text-xs text-destructive">
-                Veuillez remplir nom, téléphone et adresse.
+                {!meetsMin
+                  ? `Minimum ${MIN_ITEMS} bouteilles requis.`
+                  : "Veuillez remplir nom, téléphone et adresse."}
               </p>
             )}
+
             <button
               onClick={() => {
                 if (confirm("Vider le panier ?")) clear();
