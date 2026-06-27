@@ -8,12 +8,22 @@ export const Route = createFileRoute("/contact")({
       { title: "Contact — Commander sur WhatsApp" },
       {
         name: "description",
-        content: "Contactez-nous sur WhatsApp ou par téléphone pour passer votre commande.",
+        content:
+          "Contactez شركة الحرمين sur WhatsApp ou par téléphone pour passer votre commande d'eau à Ben Arous.",
       },
+      { property: "og:title", content: `Contact — ${SITE.brand}` },
+      {
+        property: "og:description",
+        content:
+          "Joignez-nous sur WhatsApp au +216 52 243 555 ou par téléphone, du lundi au dimanche de 8h à 20h.",
+      },
+      { property: "og:url", content: "https://aqua-dash-tunisia.lovable.app/contact" },
     ],
+    links: [{ rel: "canonical", href: "https://aqua-dash-tunisia.lovable.app/contact" }],
   }),
   component: ContactPage,
 });
+
 
 function ContactPage() {
   return (

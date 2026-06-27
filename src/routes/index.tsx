@@ -23,22 +23,64 @@ const productsQO = queryOptions({
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: `${SITE.brand} — Livraison d'eau à Ben Arous` },
+      { title: `${SITE.brand} — Livraison d'eau à domicile à Ben Arous` },
       {
         name: "description",
         content:
           "Commandez de l'eau et des boissons. Livraison rapide à domicile et au bureau à Ben Arous.",
       },
-      { property: "og:title", content: `${SITE.brand} — Livraison rapide` },
+      { property: "og:title", content: `${SITE.brand} — Livraison d'eau à Ben Arous` },
       {
         property: "og:description",
         content: "Commandez en ligne. Livraison le jour même à Ben Arous.",
+      },
+      { property: "og:url", content: "https://aqua-dash-tunisia.lovable.app/" },
+    ],
+    links: [{ rel: "canonical", href: "https://aqua-dash-tunisia.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: SITE.brand,
+          url: "https://aqua-dash-tunisia.lovable.app/",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          name: SITE.brand,
+          alternateName: SITE.brandEn,
+          url: "https://aqua-dash-tunisia.lovable.app/",
+          telephone: `+${SITE.whatsappRaw}`,
+          areaServed: SITE.areas,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Ben Arous",
+            addressCountry: "TN",
+          },
+          openingHoursSpecification: [
+            {
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: [
+                "Monday", "Tuesday", "Wednesday", "Thursday",
+                "Friday", "Saturday", "Sunday",
+              ],
+              opens: "08:00",
+              closes: "20:00",
+            },
+          ],
+        }),
       },
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(productsQO),
   component: Home,
 });
+
 
 type Filter = "all" | GroupKey;
 
@@ -93,7 +135,9 @@ function Home() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-6 sm:py-10">
       <header className="mb-5">
-        <h1 className="text-2xl font-extrabold sm:text-3xl">Notre catalogue</h1>
+        <h1 className="text-2xl font-extrabold sm:text-3xl">
+          Livraison d'eau à domicile à Ben Arous
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Ajoutez vos produits au panier, puis envoyez votre commande sur WhatsApp.
         </p>
@@ -107,9 +151,11 @@ function Home() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Rechercher un produit…"
+              aria-label="Rechercher un produit"
               className="w-full rounded-xl border border-input bg-background py-2.5 pl-10 pr-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/30"
             />
           </div>
+
           <div className="flex flex-wrap gap-2">
             <Chip active={filter === "all"} onClick={() => setFilter("all")}>
               Tout

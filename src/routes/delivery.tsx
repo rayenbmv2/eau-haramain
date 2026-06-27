@@ -9,12 +9,24 @@ export const Route = createFileRoute("/delivery")({
       {
         name: "description",
         content:
-          "Livraison à domicile et au bureau le jour même à Ben Arous. Commandes en gros acceptées.",
+          "Livraison d'eau à domicile et au bureau le jour même à Ben Arous. Commandes en gros acceptées.",
       },
+      {
+        property: "og:title",
+        content: `Livraison d'eau à Ben Arous — ${SITE.brand}`,
+      },
+      {
+        property: "og:description",
+        content:
+          "Livraison rapide à Ben Arous, Mégrine, Radès, Ezzahra, Hammam Lif et Mourouj — particuliers et professionnels.",
+      },
+      { property: "og:url", content: "https://aqua-dash-tunisia.lovable.app/delivery" },
     ],
+    links: [{ rel: "canonical", href: "https://aqua-dash-tunisia.lovable.app/delivery" }],
   }),
   component: DeliveryPage,
 });
+
 
 function DeliveryPage() {
   return (
