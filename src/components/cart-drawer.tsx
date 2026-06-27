@@ -17,6 +17,7 @@ export function CartFab() {
 
   const count = cartCount(items);
   const total = cartTotal(items);
+  const belowMin = count > 0 && count < 10;
 
   return (
     <>
@@ -33,6 +34,12 @@ export function CartFab() {
             </span>
           </span>
           <span className="text-sm font-bold tabular-nums">{total.toFixed(3)} TND</span>
+          {belowMin && (
+            <span className="rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-amber-950">
+              Min 10
+            </span>
+          )}
+
         </button>
       ) : (
         mounted && (
