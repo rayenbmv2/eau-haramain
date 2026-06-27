@@ -135,7 +135,9 @@ function Home() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-6 sm:py-10">
       <header className="mb-5">
-        <h1 className="text-2xl font-extrabold sm:text-3xl">Notre catalogue</h1>
+        <h1 className="text-2xl font-extrabold sm:text-3xl">
+          Livraison d'eau à domicile à Ben Arous
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Ajoutez vos produits au panier, puis envoyez votre commande sur WhatsApp.
         </p>
@@ -149,9 +151,11 @@ function Home() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Rechercher un produit…"
+              aria-label="Rechercher un produit"
               className="w-full rounded-xl border border-input bg-background py-2.5 pl-10 pr-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/30"
             />
           </div>
+
           <div className="flex flex-wrap gap-2">
             <Chip active={filter === "all"} onClick={() => setFilter("all")}>
               Tout
