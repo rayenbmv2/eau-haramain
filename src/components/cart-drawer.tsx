@@ -63,10 +63,19 @@ function CartPanel({ onClose }: { onClose: () => void }) {
   const [touched, setTouched] = useState(false);
 
   const total = cartTotal(items);
+  const count = cartCount(items);
+  const MIN_ITEMS = 10;
+  const missing = Math.max(0, MIN_ITEMS - count);
+  const meetsMin = count >= MIN_ITEMS;
   const valid =
-    customer.name.trim() && customer.phone.trim() && customer.address.trim() && items.length > 0;
+    customer.name.trim() &&
+    customer.phone.trim() &&
+    customer.address.trim() &&
+    items.length > 0 &&
+    meetsMin;
 
   const message = buildOrderMessage(customer, items);
+
 
   function order(e: React.MouseEvent) {
     setTouched(true);

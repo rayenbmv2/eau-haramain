@@ -1,38 +1,20 @@
-# 1.5L photos, name fixes & Garci restructure
+## Minimum order: 10 items total
 
-Scope: only 1.5L products + Vivian 2L photo copy + Garci change. Stock/admin/0.5L deferred to next batches.
+Enforce a minimum of **10 units total** in the cart before a customer can send the WhatsApp order. Mixed products count together (e.g. 3 Apla + 3 Sprite + 4 Hayet = 10 ✓).
 
-## 1. Upload 1.5L photos to CDN
-Upload all 10 uploaded files via `lovable-assets create` from `/mnt/user-uploads/`.
+### Changes — `src/components/cart-drawer.tsx` only
 
-## 2. Map photos to products (with name corrections based on labels)
+1. **Constant**: `const MIN_ITEMS = 10;`
+2. **Validation**: extend `valid` so it also requires `cartCount(items) >= MIN_ITEMS`.
+3. **Cart panel UI**:
+   - Under the total, show current count vs. minimum, e.g. *"Quantité: 7 / 10 minimum"*.
+   - When below 10, render a clear notice in amber: *"Commande minimum: 10 bouteilles. Ajoutez encore X article(s)."*
+   - The "Commander sur WhatsApp" button stays disabled (greyed-out style already in place) until the minimum is reached.
+4. **Floating cart FAB** (bottom-right pill): if count < 10, show a small badge/dot or subtle text hint so users notice before opening the drawer. Keep it discreet — the main enforcement happens in the drawer.
 
-| File | DB product (current) | Action |
-|---|---|---|
-| Bargou_1.5_L.webp | Bargo 1.5L | rename → **Bargou**, set image |
-| Caristalin_1.5.webp | Caristalin 1.5L | rename → **Cristaline**, set image |
-| Delice_1.5.webp | Delice 1.5L | set image |
-| eau-minerale.webp (Melina) | Melina 1.5L | set image |
-| hayet_1.5.webp | 7ayet 1.5L | rename → **Hayet**, set image |
-| MY_TUNISIA_1.5.jpg | My Tunisia 1.5L | set image |
-| sabrine_1.5.webp | Sabrine 1.5L | set image |
-| Safia_1.5.webp | Safia 1.5L | set image |
-| Ttiba_1.5.jpg | Tiba 1.5L | set image (label = Tiba, keep name) |
-| tijen_1.5.png | — (not in DB) | **insert new** product `Tijen` 1.5L, eau category, price TBD |
+### Out of scope
+- No per-product minimum, no per-category minimum — just total units.
+- No backend change (orders go via WhatsApp, no DB write).
+- No change to admin or product pages.
 
-Question: **Tijen** isn't in the DB — what price should I use? I'll default to 3.800 TND unless you say otherwise.
-
-## 3. Vivian photo on 2L
-Copy current `Vivian 1.5L` `image_url` to `Vivian 2L` (price 4.300 stays).
-
-## 4. Garci restructure (1.5L)
-- Rename existing `Garci Zarga` 1.5L → **Garci Bleu**, price 4.200 (keep image).
-- Insert new `Garci` 1.5L at 4.200 TND (no image yet).
-
-## 5. Out of scope (will do after you confirm)
-- Stock badge visibility on cards (already implemented backend in last turn; will verify it shows on the shop)
-- Admin page polish
-- 0.5L photos & products
-- 2L name corrections
-
-Confirm and I'll execute, defaulting Tijen price to 3.800 TND unless you specify another.
+Confirm and I'll implement.
