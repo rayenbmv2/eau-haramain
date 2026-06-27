@@ -12,6 +12,10 @@ export const listProducts = createServerFn({ method: "GET" }).handler(async () =
     .from("products")
     .select("id, name, size, category, price_tnd, image_url, featured, sort_order, in_stock")
     .order("sort_order", { ascending: true });
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("[listProducts]", error);
+    throw new Error("Failed to load products. Please try again.");
+  }
+
   return data ?? [];
 });

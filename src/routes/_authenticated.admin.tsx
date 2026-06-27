@@ -51,19 +51,35 @@ function AdminPage() {
 
   const [ready, setReady] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [claiming, setClaiming] = useState(false);
+  const [claimError, setClaimError] = useState<string | null>(null);
   const [editing, setEditing] = useState<ProductForm | null>(null);
 
   useEffect(() => {
     (async () => {
       const res = await checkAdmin();
-      if (!res.isAdmin) {
-        const c = await claim();
-        const res2 = await checkAdmin();
-        setIsAdmin(res2.isAdmin || c.claimed);
-      } else setIsAdmin(true);
+      setIsAdmin(res.isAdmin);
       setReady(true);
     })();
-  }, [checkAdmin, claim]);
+  }, [checkAdmin]);
+
+  async function handleClaim() {
+    setClaimError(null);
+    setClaiming(true);
+    try {
+      const c = await claim();
+      if (c.claimed) {
+        const res2 = await checkAdmin();
+        setIsAdmin(res2.isAdmin);
+      } else {
+        setClaimError("Un administrateur existe déjà. Contactez-le pour obtenir l'accès.");
+      }
+    } catch {
+      setClaimError("Impossible de revendiquer le rôle administrateur.");
+    } finally {
+      setClaiming(false);
+    }
+  }
 
   const productsQ = useQuery({ queryKey: ["products"], queryFn: () => listProducts() });
 
@@ -100,9 +116,21 @@ function AdminPage() {
         <p className="mt-2 text-sm text-muted-foreground">
           Votre compte n'a pas les droits administrateur.
         </p>
+        <p className="mt-4 text-xs text-muted-foreground">
+          Si aucun administrateur n'a encore été configuré, vous pouvez revendiquer ce rôle.
+        </p>
+        <button
+          onClick={handleClaim}
+          disabled={claiming}
+          className="mt-3 inline-flex items-center gap-2 rounded-xl border border-input px-4 py-2 text-sm font-medium hover:bg-accent disabled:opacity-50"
+        >
+          {claiming ? "…" : "Revendiquer le rôle administrateur"}
+        </button>
+        {claimError && <p className="mt-3 text-xs text-destructive">{claimError}</p>}
       </div>
     );
   }
+
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-10">

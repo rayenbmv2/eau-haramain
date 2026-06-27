@@ -2,13 +2,25 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
+async function isAdmin(context: { supabase: any; userId: string }): Promise<boolean> {
+  // user_roles RLS lets users read their own roles, so this works under the
+  // authenticated client without needing a SECURITY DEFINER RPC.
+  const { data, error } = await context.supabase
+    .from("user_roles")
+    .select("id")
+    .eq("user_id", context.userId)
+    .eq("role", "admin")
+    .limit(1)
+    .maybeSingle();
+  if (error) {
+    console.error("[isAdmin] role lookup failed", error);
+    throw new Error("Authorization check failed.");
+  }
+  return !!data;
+}
+
 async function assertAdmin(context: { supabase: any; userId: string }) {
-  const { data, error } = await context.supabase.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "admin",
-  });
-  if (error) throw new Error(error.message);
-  if (!data) throw new Error("Forbidden: admin only");
+  if (!(await isAdmin(context))) throw new Error("Forbidden: admin only");
 }
 
 const productSchema = z.object({
@@ -34,34 +46,34 @@ export const setProductStock = createServerFn({ method: "POST" })
       .from("products")
       .update({ in_stock: data.in_stock })
       .eq("id", data.id);
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[setProductStock]", error);
+      throw new Error("Failed to update stock. Please try again.");
+    }
     return { ok: true };
   });
 
 export const isCurrentUserAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    return { isAdmin: !!data, userId: context.userId };
+    return { isAdmin: await isAdmin(context), userId: context.userId };
   });
 
 export const claimAdminIfNone = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { count, error: cErr } = await supabaseAdmin
-      .from("user_roles")
-      .select("id", { count: "exact", head: true })
-      .eq("role", "admin");
-    if (cErr) throw new Error(cErr.message);
-    if ((count ?? 0) > 0) return { claimed: false };
+    // Atomic: the partial unique index `one_admin_only` enforces a single admin
+    // at the DB level, so concurrent inserts race-safely — at most one succeeds.
     const { error } = await supabaseAdmin
       .from("user_roles")
       .insert({ user_id: context.userId, role: "admin" });
-    if (error) throw new Error(error.message);
+    if (error) {
+      // 23505 = unique_violation → an admin already exists.
+      if ((error as any).code === "23505") return { claimed: false };
+      console.error("[claimAdminIfNone]", error);
+      throw new Error("Could not claim admin role.");
+    }
     return { claimed: true };
   });
 
@@ -84,7 +96,10 @@ export const upsertProduct = createServerFn({ method: "POST" })
           ...(data.in_stock !== undefined ? { in_stock: data.in_stock } : {}),
         })
         .eq("id", data.id);
-      if (error) throw new Error(error.message);
+      if (error) {
+        console.error("[upsertProduct:update]", error);
+        throw new Error("Failed to save product. Please try again.");
+      }
       return { ok: true, id: data.id };
     } else {
       const { data: row, error } = await context.supabase
@@ -100,7 +115,10 @@ export const upsertProduct = createServerFn({ method: "POST" })
         })
         .select("id")
         .single();
-      if (error) throw new Error(error.message);
+      if (error) {
+        console.error("[upsertProduct:insert]", error);
+        throw new Error("Failed to create product. Please try again.");
+      }
       return { ok: true, id: row.id };
     }
   });
@@ -111,6 +129,9 @@ export const deleteProduct = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { error } = await context.supabase.from("products").delete().eq("id", data.id);
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error("[deleteProduct]", error);
+      throw new Error("Failed to delete product. Please try again.");
+    }
     return { ok: true };
   });
