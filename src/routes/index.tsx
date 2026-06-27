@@ -23,22 +23,64 @@ const productsQO = queryOptions({
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: `${SITE.brand} — Livraison d'eau à Ben Arous` },
+      { title: `${SITE.brand} — Livraison d'eau à domicile à Ben Arous` },
       {
         name: "description",
         content:
           "Commandez de l'eau et des boissons. Livraison rapide à domicile et au bureau à Ben Arous.",
       },
-      { property: "og:title", content: `${SITE.brand} — Livraison rapide` },
+      { property: "og:title", content: `${SITE.brand} — Livraison d'eau à Ben Arous` },
       {
         property: "og:description",
         content: "Commandez en ligne. Livraison le jour même à Ben Arous.",
+      },
+      { property: "og:url", content: "https://aqua-dash-tunisia.lovable.app/" },
+    ],
+    links: [{ rel: "canonical", href: "https://aqua-dash-tunisia.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: SITE.brand,
+          url: "https://aqua-dash-tunisia.lovable.app/",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          name: SITE.brand,
+          alternateName: SITE.brandEn,
+          url: "https://aqua-dash-tunisia.lovable.app/",
+          telephone: `+${SITE.whatsappRaw}`,
+          areaServed: SITE.areas,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Ben Arous",
+            addressCountry: "TN",
+          },
+          openingHoursSpecification: [
+            {
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: [
+                "Monday", "Tuesday", "Wednesday", "Thursday",
+                "Friday", "Saturday", "Sunday",
+              ],
+              opens: "08:00",
+              closes: "20:00",
+            },
+          ],
+        }),
       },
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(productsQO),
   component: Home,
 });
+
 
 type Filter = "all" | GroupKey;
 

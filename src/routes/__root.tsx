@@ -73,26 +73,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: `${SITE.brand} — Fast Water Delivery` },
-      { name: "description", content: "Order bottled water and beverages with home or business delivery in Ben Arous." },
-      { property: "og:title", content: `${SITE.brand} — Fast Water Delivery` },
-      { property: "og:description", content: "Order bottled water and beverages with home or business delivery in Ben Arous." },
-      { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { title: "Lovable App" },
-      { property: "og:title", content: "Lovable App" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "Order bottled water and beverages with home or business delivery in Ben Arous." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/87ff5f56-7585-44a3-9a15-bf5185f6f3a5/id-preview-0992c88a--42cfbd6c-3961-4de9-be36-abd362e5f29d.lovable.app-1782396367886.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/87ff5f56-7585-44a3-9a15-bf5185f6f3a5/id-preview-0992c88a--42cfbd6c-3961-4de9-be36-abd362e5f29d.lovable.app-1782396367886.png" },
+      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: SITE.brand },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: SITE.brand,
+          alternateName: SITE.brandEn,
+          url: "https://aqua-dash-tunisia.lovable.app",
+          telephone: `+${SITE.whatsappRaw}`,
+          areaServed: SITE.areas,
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
+
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
