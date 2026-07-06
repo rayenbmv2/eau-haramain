@@ -1,24 +1,21 @@
-## Update 1L bottle images
+## Reorder soft drinks (Gazouz) from biggest to smallest
 
-Replace the placeholder/wrong images on the six 1L water products with the photos you uploaded.
+Currently the soft_drinks category is sorted 1L → 1.5L → 33cl → Delio 1L → 0.30L. You want the same treatment as water: largest volume first, descending down to the smallest.
 
-### Mapping
+### New order (all soft_drinks, sort_order rewritten)
 
-| Product (row in DB) | New image |
-|---|---|
-| Delice 1L | `eau-minerale.jpg` |
-| Garci 1L | `garci.webp` |
-| Garci Bleu 1L | `garci_blue.webp` |
-| Hayet 1L | `hayet.webp` |
-| Mira 1L | `mira.jpg` (replaces the 2L-looking picture currently shown) |
-| Pristine 1L | `pristine.jpg` |
+**1.5L block (sort_order 10–18)**
+Coca, Fanta, Sprite, Apla, Viva, Schweppes Mangue, Schweppes Citron, Punch Orange, Boga Cidre
 
-Mira 2L is left as-is (still uses the 2L bottle image, which is correct for it).
+**1L block (sort_order 20–31)**
+Coca, Fanta, Sprite, Schweppes, Boga Lim, Boga Cidre, Punch Pomme, Punch Orange, Delio, Delio Mint, Delio Peach, Delio Apple, Delio Pear
 
-### Steps
+**33cl / 0.33L block (sort_order 40–48)**
+Coca Canette, Coca Zero Canette, Fanta Canette, Sprite Canette, Boga Bitha Canette, Boga Cidre Canette, Schweppes Tonic Canette, Schweppes Ananas Canette, Orangina Canette
 
-1. Upload each of the 6 files to the Lovable CDN via `lovable-assets create`, storing pointer JSONs under `src/assets/`.
-2. Run a single SQL update to set `products.image_url` for each of the 6 rows above to its new CDN URL.
-3. Verify on the home page that each 1L card shows the correct bottle.
+**0.30L block (sort_order 60–62)**
+Punch Cidre, Punch Apple, Punch Orange
 
-No code, schema, or pricing changes.
+### How
+
+One `UPDATE` per product on the `products` table setting the new `sort_order` (only the soft_drinks category is touched; water is left alone). No schema or code changes.
