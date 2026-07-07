@@ -83,13 +83,44 @@ export const Route = createFileRoute("/")({
 
 
 type Filter = "all" | GroupKey;
+type DrinkSize = "25cl" | "33cl" | "0.5L" | "1L" | "1.5L" | "other";
+
+const DRINK_SIZE_ORDER: DrinkSize[] = ["25cl", "33cl", "0.5L", "1L", "1.5L", "other"];
+const DRINK_SIZE_LABEL: Record<DrinkSize, string> = {
+  "25cl": "25 cl",
+  "33cl": "33 cl",
+  "0.5L": "0,5 L",
+  "1L": "1 L",
+  "1.5L": "1,5 L",
+  other: "Autres formats",
+};
+
+function drinkSizeBucket(size: string): DrinkSize {
+  const normalized = size.toLowerCase().replace(",", ".");
+  const cl = normalized.match(/(\d+(?:\.\d+)?)\s*c\s*l/);
+  if (cl) {
+    const value = parseFloat(cl[1]);
+    if (value === 25) return "25cl";
+    if (value === 30 || value === 33) return "33cl";
+  }
+  const liters = normalized.match(/(\d+(?:\.\d+)?)\s*l/);
+  if (liters) {
+    const value = parseFloat(liters[1]);
+    if (value === 0.25) return "25cl";
+    if (value === 0.3 || value === 0.33) return "33cl";
+    if (value === 0.5) return "0.5L";
+    if (value === 1) return "1L";
+    if (value === 1.5) return "1.5L";
+  }
+  return "other";
+}
 
 function Home() {
   const { data: products } = useSuspenseQuery(productsQO);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
 
-  const { waterBuckets, drinks, totalShown } = useMemo(() => {
+  const { waterBuckets, drinkBuckets, totalShown } = useMemo(() => {
     const needle = q.trim().toLowerCase();
     const water: typeof products = [];
     const drinks: typeof products = [];
@@ -116,19 +147,35 @@ function Home() {
     for (const k of WATER_SIZE_ORDER) {
       waterBuckets[k].sort((a, b) => Number(a.price_tnd) - Number(b.price_tnd));
     }
-    drinks.sort(
-      (a, b) =>
-        a.name.localeCompare(b.name) || Number(a.price_tnd) - Number(b.price_tnd),
-    );
+    const drinkBuckets: Record<DrinkSize, typeof products> = {
+      "25cl": [],
+      "33cl": [],
+      "0.5L": [],
+      "1L": [],
+      "1.5L": [],
+      other: [],
+    };
+    for (const p of drinks) {
+      drinkBuckets[drinkSizeBucket(p.size)].push(p);
+    }
+    for (const k of DRINK_SIZE_ORDER) {
+      drinkBuckets[k].sort(
+        (a, b) => a.sort_order - b.sort_order || Number(a.price_tnd) - Number(b.price_tnd),
+      );
+    }
     return {
       waterBuckets,
-      drinks,
+      drinkBuckets,
       totalShown: water.length + drinks.length,
     };
   }, [products, q, filter]);
 
   const waterCount = WATER_SIZE_ORDER.reduce(
     (s, k) => s + waterBuckets[k].length,
+    0,
+  );
+  const drinkCount = DRINK_SIZE_ORDER.reduce(
+    (s, k) => s + drinkBuckets[k].length,
     0,
   );
 
@@ -206,18 +253,30 @@ function Home() {
           </section>
         )}
 
-        {drinks.length > 0 && (
+        {drinkCount > 0 && (
           <section id="drinks" className="scroll-mt-32">
             <h2 className="mb-4 flex items-baseline gap-3 text-xl font-bold sm:text-2xl">
               Boissons
               <span className="text-xs font-medium text-muted-foreground">
-                {drinks.length} produits
+                {drinkCount} produits
               </span>
             </h2>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-              {drinks.map((p) => (
-                <ProductCard key={p.id} p={p} />
-              ))}
+            <div className="space-y-8">
+              {DRINK_SIZE_ORDER.map((k) =>
+                drinkBuckets[k].length === 0 ? null : (
+                  <div key={k}>
+                    <h3 className="mb-4 flex items-center gap-2 border-b border-primary/20 pb-2 text-lg font-bold text-primary sm:text-xl">
+                      <Droplet className="h-5 w-5 fill-primary/20" />
+                      {DRINK_SIZE_LABEL[k]}
+                    </h3>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+                      {drinkBuckets[k].map((p) => (
+                        <ProductCard key={p.id} p={p} />
+                      ))}
+                    </div>
+                  </div>
+                ),
+              )}
             </div>
           </section>
         )}
