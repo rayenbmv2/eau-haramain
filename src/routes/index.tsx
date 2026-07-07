@@ -112,6 +112,15 @@ function drinkSizeBucket(size: string): DrinkSize {
     if (value === 1) return "1L";
     if (value === 1.5) return "1.5L";
   }
+  const bareNumber = normalized.match(/^\s*(\d+(?:\.\d+)?)\s*$/);
+  if (bareNumber) {
+    const value = parseFloat(bareNumber[1]);
+    if (value === 0.25) return "25cl";
+    if (value === 0.3 || value === 0.33) return "33cl";
+    if (value === 0.5) return "0.5L";
+    if (value === 1) return "1L";
+    if (value === 1.5) return "1.5L";
+  }
   return "other";
 }
 
