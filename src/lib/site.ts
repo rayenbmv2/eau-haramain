@@ -2,9 +2,10 @@ export const SITE = {
   brand: "شركة الحرمين",
   brandEn: "Al Haramain",
   tagline: "Livraison rapide d'eau et boissons",
-  whatsappRaw: "21652243555",
-  phoneDisplay: "+216 52 243 555",
+  whatsappRaw: "21699185506",
+  phoneDisplay: "+216 99 185 506",
   hours: "Lun – Dim · 8h00 – 20h00",
+  mapsUrl: "https://maps.app.goo.gl/9ZU1fBLyiJ1TQCkh8",
   areas: ["Ben Arous", "Mégrine", "Radès", "Ezzahra", "Hammam Lif", "Mourouj"],
 };
 
