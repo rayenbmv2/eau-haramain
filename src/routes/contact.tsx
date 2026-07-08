@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Phone, Clock, MessageCircle } from "lucide-react";
+import { Phone, Clock, MessageCircle, MapPin } from "lucide-react";
 import { SITE, waUrl } from "@/lib/site";
 
 export const Route = createFileRoute("/contact")({
@@ -76,7 +76,41 @@ function ContactPage() {
             <p className="mt-0.5 text-base font-medium">{SITE.hours}</p>
           </div>
         </div>
+
+        <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-card">
+          <div className="flex items-start gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent text-primary">
+              <MapPin className="h-5 w-5" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold">Notre localisation</p>
+              <p className="mt-0.5 text-base font-medium">Ben Arous, Tunisie</p>
+              <div className="mt-3">
+                <a
+                  href={SITE.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-soft hover:opacity-95"
+                >
+                  <MapPin className="h-5 w-5" /> Ouvrir dans Google Maps
+                </a>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 overflow-hidden rounded-xl border border-border/60">
+            <iframe
+              title="Localisation شركة الحرمين"
+              src="https://www.google.com/maps?q=Ben+Arous,Tunisia&output=embed"
+              width="100%"
+              height="280"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              style={{ border: 0, display: "block" }}
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
 }
+

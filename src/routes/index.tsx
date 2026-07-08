@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Search, Droplet } from "lucide-react";
+import { Search, Droplet, Flame } from "lucide-react";
 import { listProducts } from "@/lib/products.functions";
 import { ProductCard } from "@/components/product-card";
+import { PromoCard } from "@/components/promo-card";
+import { PromoCountdown } from "@/components/promo-countdown";
+import { PROMOTIONS } from "@/lib/promotions";
 import {
   SITE,
   GROUPS,
@@ -234,6 +237,34 @@ function Home() {
       )}
 
       <div className="space-y-10">
+        <section id="promotions" className="scroll-mt-32">
+          <div className="overflow-hidden rounded-3xl border-2 border-amber-400/50 bg-gradient-to-br from-red-600 via-orange-500 to-amber-500 p-5 shadow-card sm:p-7">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-white">
+                  <Flame className="h-6 w-6 sm:h-7 sm:w-7" />
+                  <h2 className="text-2xl font-black uppercase tracking-tight sm:text-3xl">
+                    Promotions
+                  </h2>
+                </div>
+                <p
+                  dir="rtl"
+                  className="mt-1 font-arabic text-base font-bold text-white/95 sm:text-lg"
+                >
+                  عروض حصرية · لفترة محدودة
+                </p>
+              </div>
+              <PromoCountdown />
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+              {PROMOTIONS.map((p) => (
+                <PromoCard key={p.id} p={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+
         {waterCount > 0 && (
           <section id="water" className="scroll-mt-32">
             <h2 className="mb-4 flex items-baseline gap-3 text-xl font-bold sm:text-2xl">
