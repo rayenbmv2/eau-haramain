@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Droplet, Menu, X } from "lucide-react";
+import { Droplet, Menu, X, Truck } from "lucide-react";
 import { useState } from "react";
 import { SITE } from "@/lib/site";
 
@@ -13,6 +13,12 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur">
+      <div className="flex items-center justify-center gap-3 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 px-4 py-1.5 text-center text-[13px] font-bold text-white sm:text-sm">
+        <Truck className="h-4 w-4 shrink-0" />
+        <span dir="rtl" className="font-arabic text-base">توصيل مجاني</span>
+        <span className="hidden opacity-90 sm:inline">·</span>
+        <span className="hidden sm:inline">Livraison gratuite</span>
+      </div>
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
         <Link to="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-hero text-primary-foreground shadow-soft">
