@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Search, Droplet } from "lucide-react";
+import { Search, Droplet, Flame } from "lucide-react";
 import { listProducts } from "@/lib/products.functions";
 import { ProductCard } from "@/components/product-card";
+import { PromoCard } from "@/components/promo-card";
+import { PromoCountdown } from "@/components/promo-countdown";
+import { PROMOTIONS } from "@/lib/promotions";
 import {
   SITE,
   GROUPS,
