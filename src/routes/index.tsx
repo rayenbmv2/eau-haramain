@@ -26,7 +26,7 @@ const productsQO = queryOptions({
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: `${SITE.brand} — Livraison d'eau à domicile à Ben Arous` },
+      { title: `${SITE.brand} — Livraison d'eau à domicile à el mourouj` },
       {
         name: "description",
         content:
