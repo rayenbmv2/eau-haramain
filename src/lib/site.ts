@@ -6,7 +6,7 @@ export const SITE = {
   phoneDisplay: "+216 99 185 506",
   hours: "Lun – Dim · 8h00 – 20h00",
   mapsUrl: "https://maps.app.goo.gl/9ZU1fBLyiJ1TQCkh8",
-  areas: ["Ben Arous", "Mégrine", "Radès", "Ezzahra", "Hammam Lif", "Mourouj"],
+  areas: ["Mourouj"],
 };
 
 export function waUrl(text: string) {
