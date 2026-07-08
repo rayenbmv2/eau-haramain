@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Phone, Clock, MessageCircle } from "lucide-react";
+import { Phone, Clock, MessageCircle, MapPin } from "lucide-react";
 import { SITE, waUrl } from "@/lib/site";
 
 export const Route = createFileRoute("/contact")({
