@@ -81,7 +81,7 @@ export function SiteFooter() {
         <div>
           <p className="font-arabic text-lg font-bold">{SITE.brand}</p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Livraison rapide d'eau et de boissons à Ben Arous et environs.
+            Livraison rapide d'eau et de boissons à el mourouj.
           </p>
         </div>
         <div>
