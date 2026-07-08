@@ -195,7 +195,7 @@ function Home() {
     <section className="mx-auto max-w-6xl px-4 py-6 sm:py-10">
       <header className="mb-5">
         <h1 className="text-2xl font-extrabold sm:text-3xl">
-          Livraison d'eau à domicile à Ben Arous
+          Livraison d'eau à domicile à el mourouj
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Ajoutez vos produits au panier, puis envoyez votre commande sur WhatsApp.
