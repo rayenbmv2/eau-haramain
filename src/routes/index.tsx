@@ -30,12 +30,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Commandez de l'eau et des boissons. Livraison rapide à domicile et au bureau à Ben Arous.",
+          "Commandez de l'eau et des boissons. Livraison rapide à domicile et au bureau à el mourouj.",
       },
-      { property: "og:title", content: `${SITE.brand} — Livraison d'eau à Ben Arous` },
+      { property: "og:title", content: `${SITE.brand} — Livraison d'eau à el mourouj` },
       {
         property: "og:description",
-        content: "Commandez en ligne. Livraison le jour même à Ben Arous.",
+        content: "Commandez en ligne. Livraison le jour même à el mourouj.",
       },
       { property: "og:url", content: "https://aqua-dash-tunisia.lovable.app/" },
     ],
@@ -62,7 +62,7 @@ export const Route = createFileRoute("/")({
           areaServed: SITE.areas,
           address: {
             "@type": "PostalAddress",
-            addressLocality: "Ben Arous",
+            addressLocality: "el mourouj",
             addressCountry: "TN",
           },
           openingHoursSpecification: [
@@ -72,8 +72,8 @@ export const Route = createFileRoute("/")({
                 "Monday", "Tuesday", "Wednesday", "Thursday",
                 "Friday", "Saturday", "Sunday",
               ],
-              opens: "08:00",
-              closes: "20:00",
+              opens: "07:00",
+              closes: "22:00",
             },
           ],
         }),
