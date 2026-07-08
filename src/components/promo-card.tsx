@@ -1,11 +1,9 @@
 import { Flame } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import type { Promotion } from "@/lib/promotions";
-
 export function PromoCard({ p }: { p: Promotion }) {
   const add = useCart((s) => s.add);
   const savings = (p.oldPriceTnd * p.packQty - p.priceTnd).toFixed(3);
-
   const handleAdd = () => {
     add({
       id: p.id,
@@ -14,7 +12,6 @@ export function PromoCard({ p }: { p: Promotion }) {
       price: p.priceTnd,
     });
   };
-
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-amber-400/60 bg-card shadow-card transition hover:-translate-y-0.5 hover:shadow-soft">
       <div className="absolute right-2 top-2 z-10 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-red-500 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white shadow-soft">
@@ -30,7 +27,7 @@ export function PromoCard({ p }: { p: Promotion }) {
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         />
         <span className="absolute bottom-2 left-2 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur">
-          Pack de {p.packQty}
+          Pack de {p.packQty} (packs de 6 bouteilles)
         </span>
       </div>
       <div className="flex flex-1 flex-col gap-3 p-3 sm:p-4">
@@ -39,7 +36,7 @@ export function PromoCard({ p }: { p: Promotion }) {
             {p.name} {p.size}
           </h3>
           <p className="text-xs text-muted-foreground">
-            {p.packQty} bouteilles
+            {p.packQty} packs de 6 bouteilles
           </p>
         </div>
         <div className="mt-auto space-y-2">
