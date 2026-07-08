@@ -26,7 +26,7 @@ export const PROMOTIONS: Promotion[] = [
     size: "2 L",
     packQty: 3,
     priceTnd: 12.0,
-    oldPriceTnd: 12.9,
+    oldPriceTnd: 4.3,
     image: productWater,
   },
   {
