@@ -1,4 +1,6 @@
-import productWater from "@/assets/product-water.jpg";
+import vivianImg from "@/assets/vivan 1.5.png";
+import melinaImg from "@/assets/melina 2L.webp";
+import pristineImg from "@/assets/pristine 2l.webp";
 
 export type Promotion = {
   id: string;
@@ -18,7 +20,7 @@ export const PROMOTIONS: Promotion[] = [
     packQty: 3,
     priceTnd: 12.0,
     oldPriceTnd: 4.3,
-    image: productWater,
+    image: vivianImg,
   },
   {
     id: "promo-melina-2l",
@@ -27,7 +29,7 @@ export const PROMOTIONS: Promotion[] = [
     packQty: 3,
     priceTnd: 12.0,
     oldPriceTnd: 4.3,
-    image: productWater,
+    image: melinaImg,
   },
   {
     id: "promo-pristine-2l",
@@ -36,6 +38,6 @@ export const PROMOTIONS: Promotion[] = [
     packQty: 3,
     priceTnd: 12.0,
     oldPriceTnd: 4.3,
-    image: productWater,
+    image: pristineImg,
   },
 ];
