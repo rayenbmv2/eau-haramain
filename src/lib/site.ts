@@ -4,7 +4,7 @@ export const SITE = {
   tagline: "Livraison rapide d'eau et boissons",
   whatsappRaw: "21699185506",
   phoneDisplay: "+216 99 185 506",
-  hours: "Lun – Dim · 8h00 – 20h00",
+  hours: "Lun – Dim · 7h00 – 22h00",
   mapsUrl: "https://maps.app.goo.gl/9ZU1fBLyiJ1TQCkh8",
   areas: ["Mourouj"],
 };
