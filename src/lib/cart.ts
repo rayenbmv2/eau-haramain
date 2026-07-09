@@ -14,7 +14,7 @@ export type Customer = { name: string; phone: string; address: string };
 type CartState = {
   items: CartItem[];
   customer: Customer;
-  add: (item: Omit<CartItem, "qty">) => void;
+  add: (item: Omit<CartItem, "qty">, qty?: number) => void;
   remove: (id: string) => void;
   setQty: (id: string, qty: number) => void;
   clear: () => void;
@@ -38,17 +38,18 @@ export const useCart = create<CartState>()(
     (set) => ({
       items: [],
       customer: { name: "", phone: "", address: "" },
-      add: (item) =>
+      add: (item, qty = 1) =>
         set((s) => {
+          const inc = Math.max(1, qty);
           const ex = s.items.find((i) => i.id === item.id);
           if (ex) {
             return {
               items: s.items.map((i) =>
-                i.id === item.id ? { ...i, qty: i.qty + 1 } : i,
+                i.id === item.id ? { ...i, qty: i.qty + inc } : i,
               ),
             };
           }
-          return { items: [...s.items, { ...item, qty: 1 }] };
+          return { items: [...s.items, { ...item, qty: inc }] };
         }),
       remove: (id) => set((s) => ({ items: s.items.filter((i) => i.id !== id) })),
       setQty: (id, qty) =>
