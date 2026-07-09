@@ -1,7 +1,8 @@
 import vivianImg from "@/assets/vivan 1.5.png";
 import melinaImg from "@/assets/melina 2L.webp";
 import pristineImg from "@/assets/pristine 2l.webp";
-import myTunisiaImg from "@/assets/my-tunisia-1.5l.jpg";
+const myTunisiaImg = "/__l5e/assets-v1/11367503-7981-43e5-bdc9-3401cf7b299b/my-tunisia-1.5l.jpg";
+
 
 
 export type Promotion = {
