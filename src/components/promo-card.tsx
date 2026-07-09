@@ -8,7 +8,7 @@ export function PromoCard({ p }: { p: Promotion }) {
     add(
       {
         id: p.id,
-        name: `PROMO ${p.name} — Pack de ${p.packQty}`,
+        name: `PROMO ${p.name}`,
         size: p.size,
         price: p.priceTnd / p.packQty,
       },
