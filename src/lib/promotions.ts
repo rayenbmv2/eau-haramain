@@ -1,9 +1,8 @@
+import productWater from "@/assets/product-water.jpg";
 import vivianImg from "@/assets/vivan 1.5.png";
 import melinaImg from "@/assets/melina 2L.webp";
 import pristineImg from "@/assets/pristine 2l.webp";
-const myTunisiaImg = "/__l5e/assets-v1/11367503-7981-43e5-bdc9-3401cf7b299b/my-tunisia-1.5l.jpg";
-
-
+import myTunisiaImg from "@/assets/MY TUNISIA 1.5.jpg";
 
 export type Promotion = {
   id: string;
