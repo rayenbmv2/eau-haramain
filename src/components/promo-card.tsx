@@ -5,12 +5,15 @@ export function PromoCard({ p }: { p: Promotion }) {
   const add = useCart((s) => s.add);
   const savings = (p.oldPriceTnd * p.packQty - p.priceTnd).toFixed(3);
   const handleAdd = () => {
-    add({
-      id: p.id,
-      name: `PROMO ${p.name} — Pack de ${p.packQty}`,
-      size: p.size,
-      price: p.priceTnd,
-    });
+    add(
+      {
+        id: p.id,
+        name: `PROMO ${p.name} — Pack de ${p.packQty}`,
+        size: p.size,
+        price: p.priceTnd / p.packQty,
+      },
+      p.packQty,
+    );
   };
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-amber-400/60 bg-card shadow-card transition hover:-translate-y-0.5 hover:shadow-soft">

@@ -1,6 +1,8 @@
 import vivianImg from "@/assets/vivan 1.5.png";
 import melinaImg from "@/assets/melina 2L.webp";
 import pristineImg from "@/assets/pristine 2l.webp";
+import myTunisiaImg from "@/assets/my-tunisia-1.5l.jpg";
+
 
 export type Promotion = {
   id: string;
@@ -39,5 +41,14 @@ export const PROMOTIONS: Promotion[] = [
     priceTnd: 12.0,
     oldPriceTnd: 4.3,
     image: pristineImg,
+  },
+  {
+    id: "promo-mytunisia-2l",
+    name: "My Tunisia",
+    size: "2 L",
+    packQty: 3,
+    priceTnd: 12.0,
+    oldPriceTnd: 4.3,
+    image: myTunisiaImg,
   },
 ];

@@ -31,16 +31,19 @@ function fmt(ms: number) {
 }
 
 export function PromoCountdown() {
-  const [ms, setMs] = useState<number>(() => msUntilTunisMidnight());
+  const [ms, setMs] = useState<number | null>(null);
 
   useEffect(() => {
+    setMs(msUntilTunisMidnight());
     const id = window.setInterval(() => {
-      setMs((prev) => (prev <= 1000 ? msUntilTunisMidnight() : prev - 1000));
+      setMs((prev) =>
+        prev === null || prev <= 1000 ? msUntilTunisMidnight() : prev - 1000,
+      );
     }, 1000);
     return () => window.clearInterval(id);
   }, []);
 
-  const { h, m, s } = fmt(ms);
+  const { h, m, s } = ms === null ? { h: "--", m: "--", s: "--" } : fmt(ms);
 
   return (
     <div className="inline-flex items-center gap-2 rounded-full bg-black/25 px-3 py-1.5 text-white backdrop-blur">
