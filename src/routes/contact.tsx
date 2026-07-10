@@ -99,8 +99,8 @@ function ContactPage() {
           </div>
           <div className="mt-4 overflow-hidden rounded-xl border border-border/60">
             <iframe
-              title="Localisation شركة الحرمين"
-              src="https://www.google.com/maps?q=Ben+Arous,Tunisia&output=embed"
+              title="Localisation Magasin Haramayn"
+              src="https://www.google.com/maps?q=36.727859,10.2065253&z=17&output=embed"
               width="100%"
               height="280"
               loading="lazy"
