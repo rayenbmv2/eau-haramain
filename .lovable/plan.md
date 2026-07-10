@@ -1,15 +1,11 @@
-## Changes
+## Update store location to the new Google Maps pin
 
-### 1. Add MyTunisia 2L to promotions
-In `src/lib/promotions.ts`, add a 4th entry: MyTunisia 2L, pack of 3 at 12.000 TND instead of 12.900 TND (same shape as Vivian/Melina/Pristine). It will render automatically in the promo grid on the home page.
+Replace the current Ben Arous placeholder with the real store location from https://maps.app.goo.gl/Eujewh9NhAmQzVqB7 on the Contact page.
 
-### 2. Pack quantity counts toward the 10-bottle minimum
-Right now adding a promo pack adds 1 line to the cart, so the minimum-order check sees it as 1 unit. Fix so the pack of 3 counts as 3 units:
+### Changes
 
-- In `src/components/promo-card.tsx`, when clicking "Ajouter au panier", add the pack with `quantity: p.packQty` (3) instead of 1 — call `addItem(...)` with quantity 3, or call it 3 times, matching whichever API the existing cart exposes.
-- Verify the cart total / minimum-order gate reads `sum(item.quantity)` (not `items.length`); if it currently counts lines, switch it to sum quantities so packs contribute their real bottle count everywhere (header badge, cart drawer minimum warning, WhatsApp message).
+1. **`src/lib/site.ts`** — update `SITE.mapsUrl` to `https://maps.app.goo.gl/Eujewh9NhAmQzVqB7` (the short link the user just sent, so the "Open in Google Maps" button opens exactly that pin).
 
-Files touched: `src/lib/promotions.ts`, `src/components/promo-card.tsx`, and (only if needed) the cart store / drawer / min-order check.
+2. **`src/routes/contact.tsx`** — replace the embedded iframe `src` (currently `https://www.google.com/maps?q=Ben+Arous,Tunisia&output=embed`) with an embed URL pointing at the same coordinates as the shared pin, so the map preview shown at the bottom matches the button destination. I'll resolve the short link to its actual lat/lng and use `https://www.google.com/maps?q=<lat>,<lng>&output=embed` (no API key needed, same pattern as before). Tapping the map/button still opens Google Maps with the store location, just like on the restaurant site.
 
-### 3. Quiet fix: promo countdown hydration mismatch
-`PromoCountdown` computes the remaining time during SSR and again on the client, so the first paint shows two different values (e.g. `09` vs `04`). Render a stable placeholder (e.g. `--:--:--`) on the server and only compute the live time after mount via `useEffect` + a `mounted` flag. No visual change once hydrated.
+No other pages reference the map, so nothing else changes.

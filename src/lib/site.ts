@@ -5,7 +5,7 @@ export const SITE = {
   whatsappRaw: "21699185506",
   phoneDisplay: "+216 99 185 506",
   hours: "Lun – Dim · 7h00 – 22h00",
-  mapsUrl: "https://maps.app.goo.gl/9ZU1fBLyiJ1TQCkh8",
+  mapsUrl: "https://maps.app.goo.gl/Eujewh9NhAmQzVqB7",
   areas: ["Mourouj"],
 };
 
