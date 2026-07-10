@@ -97,6 +97,26 @@ export function SiteFooter() {
           <p className="mt-2 text-sm text-muted-foreground">{SITE.areas.join(" · ")}</p>
         </div>
       </div>
+      <div className="mx-auto max-w-6xl px-4 pb-8">
+        <p className="mb-2 text-sm font-semibold">Notre localisation</p>
+        <a
+          href={SITE.mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block overflow-hidden rounded-xl border border-border/60 shadow-card transition hover:opacity-95"
+          aria-label="Ouvrir dans Google Maps"
+        >
+          <iframe
+            title="Localisation Magasin Haramayn"
+            src="https://www.google.com/maps?q=36.727859,10.2065253&z=17&output=embed"
+            width="100%"
+            height="220"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            style={{ border: 0, display: "block", pointerEvents: "none" }}
+          />
+        </a>
+      </div>
       <div className="border-t border-border/60 py-4 text-center text-xs text-muted-foreground">
         © {new Date().getFullYear()} {SITE.brand}. Tous droits réservés.
       </div>
