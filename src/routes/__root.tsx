@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader, SiteFooter } from "@/components/site-header";
 import { CartFab } from "@/components/cart-drawer";
+import { TutorialFab } from "@/components/tutorial-fab";
 import { SITE } from "@/lib/site";
 
 function NotFoundComponent() {
@@ -125,6 +126,7 @@ function RootComponent() {
         </main>
         <SiteFooter />
         <CartFab />
+        <TutorialFab />
       </div>
     </QueryClientProvider>
   );
