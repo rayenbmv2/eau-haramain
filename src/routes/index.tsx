@@ -35,7 +35,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: `${SITE.brand} — Livraison d'eau à el mourouj` },
       {
         property: "og:description",
-        content: "Commandez en ligne. Livraison le jour même à el mourouj.",
+        content: "Commandez de l'eau et des boissons. Livraison rapide à domicile et au bureau à el mourouj.",
       },
       { property: "og:url", content: "https://aqua-dash-tunisia.lovable.app/" },
     ],
