@@ -12,6 +12,7 @@ export type Promotion = {
   priceTnd: number;
   oldPriceTnd: number;
   image: string;
+  available: boolean;
 };
 
 export const PROMOTIONS: Promotion[] = [
@@ -23,6 +24,7 @@ export const PROMOTIONS: Promotion[] = [
     priceTnd: 12.0,
     oldPriceTnd: 4.3,
     image: vivianImg,
+    available: false,
   },
   {
     id: "promo-melina-2l",
@@ -32,6 +34,7 @@ export const PROMOTIONS: Promotion[] = [
     priceTnd: 12.0,
     oldPriceTnd: 4.3,
     image: melinaImg,
+    available: false,
   },
   {
     id: "promo-pristine-2l",
@@ -41,6 +44,7 @@ export const PROMOTIONS: Promotion[] = [
     priceTnd: 12.0,
     oldPriceTnd: 4.3,
     image: pristineImg,
+    available: false,
   },
   {
     id: "promo-mytunisia-2l",
@@ -50,5 +54,6 @@ export const PROMOTIONS: Promotion[] = [
     priceTnd: 12.0,
     oldPriceTnd: 4.3,
     image: myTunisiaImg,
+    available: false,
   },
 ];
