@@ -6,7 +6,7 @@ import { listProducts } from "@/lib/products.functions";
 import { ProductCard } from "@/components/product-card";
 import { PromoCard } from "@/components/promo-card";
 import { PromoCountdown } from "@/components/promo-countdown";
-import { PROMOTIONS } from "@/lib/promotions";
+import { listPromotions } from "@/lib/promotions.functions";
 import {
   SITE,
   GROUPS,
@@ -21,6 +21,11 @@ import {
 const productsQO = queryOptions({
   queryKey: ["products"],
   queryFn: () => listProducts(),
+});
+
+const promotionsQO = queryOptions({
+  queryKey: ["promotions"],
+  queryFn: () => listPromotions(),
 });
 
 export const Route = createFileRoute("/")({
@@ -80,7 +85,12 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(productsQO),
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(productsQO),
+      context.queryClient.ensureQueryData(promotionsQO),
+    ]);
+  },
   component: Home,
 });
 
@@ -129,6 +139,8 @@ function drinkSizeBucket(size: string): DrinkSize {
 
 function Home() {
   const { data: products } = useSuspenseQuery(productsQO);
+  const { data: allPromotions } = useSuspenseQuery(promotionsQO);
+  const promotions = allPromotions.filter((p) => p.active);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
 
@@ -237,6 +249,7 @@ function Home() {
       )}
 
       <div className="space-y-10">
+        {promotions.length > 0 && (
         <section id="promotions" className="scroll-mt-32">
           <div className="overflow-hidden rounded-3xl border-2 border-amber-400/50 bg-gradient-to-br from-red-600 via-orange-500 to-amber-500 p-5 shadow-card sm:p-7">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -254,15 +267,16 @@ function Home() {
                   عروض حصرية · لفترة محدودة
                 </p>
               </div>
-              <PromoCountdown />
+              {promotions.some((p) => p.available) && <PromoCountdown />}
             </div>
             <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-              {PROMOTIONS.map((p) => (
+              {promotions.map((p) => (
                 <PromoCard key={p.id} p={p} />
               ))}
             </div>
           </div>
         </section>
+        )}
 
 
         {waterCount > 0 && (
