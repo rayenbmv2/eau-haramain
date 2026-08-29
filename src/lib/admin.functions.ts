@@ -63,18 +63,97 @@ export const claimAdminIfNone = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    // Atomic: the partial unique index `one_admin_only` enforces a single admin
-    // at the DB level, so concurrent inserts race-safely — at most one succeeds.
+    // Bootstrap only: succeeds solely while no admin exists at all.
+    const { count, error: cErr } = await supabaseAdmin
+      .from("user_roles")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "admin");
+    if (cErr) {
+      console.error("[claimAdminIfNone:count]", cErr);
+      throw new Error("Could not claim admin role.");
+    }
+    if ((count ?? 0) > 0) return { claimed: false };
     const { error } = await supabaseAdmin
       .from("user_roles")
       .insert({ user_id: context.userId, role: "admin" });
     if (error) {
-      // 23505 = unique_violation → an admin already exists.
       if ((error as any).code === "23505") return { claimed: false };
       console.error("[claimAdminIfNone]", error);
       throw new Error("Could not claim admin role.");
     }
     return { claimed: true };
+  });
+
+export const listAdmins = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: roles, error } = await supabaseAdmin
+      .from("user_roles")
+      .select("id, user_id")
+      .eq("role", "admin");
+    if (error) {
+      console.error("[listAdmins]", error);
+      throw new Error("Could not load administrators.");
+    }
+    const { data: usersRes } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+    const emailById = new Map((usersRes?.users ?? []).map((u) => [u.id, u.email ?? ""]));
+    return (roles ?? []).map((r) => ({
+      id: r.id,
+      userId: r.user_id,
+      email: emailById.get(r.user_id) ?? "—",
+      isSelf: r.user_id === context.userId,
+    }));
+  });
+
+export const grantAdminByEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ email: z.string().email() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const email = data.email.trim().toLowerCase();
+    const { data: usersRes, error: uErr } = await supabaseAdmin.auth.admin.listUsers({
+      perPage: 1000,
+    });
+    if (uErr) {
+      console.error("[grantAdminByEmail:list]", uErr);
+      throw new Error("Could not look up this user.");
+    }
+    const user = (usersRes?.users ?? []).find((u) => (u.email ?? "").toLowerCase() === email);
+    if (!user) {
+      return { ok: false, reason: "not_found" as const };
+    }
+    const { error } = await supabaseAdmin
+      .from("user_roles")
+      .insert({ user_id: user.id, role: "admin" });
+    if (error && (error as any).code !== "23505") {
+      console.error("[grantAdminByEmail:insert]", error);
+      throw new Error("Could not grant the administrator role.");
+    }
+    return { ok: true as const };
+  });
+
+export const revokeAdmin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ userId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    if (data.userId === context.userId) {
+      throw new Error("Vous ne pouvez pas retirer votre propre accès.");
+    }
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("user_roles")
+      .delete()
+      .eq("user_id", data.userId)
+      .eq("role", "admin");
+    if (error) {
+      console.error("[revokeAdmin]", error);
+      throw new Error("Could not revoke the administrator role.");
+    }
+    return { ok: true };
   });
 
 export const upsertProduct = createServerFn({ method: "POST" })
