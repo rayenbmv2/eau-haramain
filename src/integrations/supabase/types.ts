@@ -56,6 +56,51 @@ export type Database = {
         }
         Relationships: []
       }
+      promotions: {
+        Row: {
+          active: boolean
+          available: boolean
+          created_at: string
+          id: string
+          image_url: string | null
+          name: string
+          old_price_tnd: number
+          pack_qty: number
+          price_tnd: number
+          size: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          available?: boolean
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          old_price_tnd: number
+          pack_qty?: number
+          price_tnd: number
+          size: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          available?: boolean
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          old_price_tnd?: number
+          pack_qty?: number
+          price_tnd?: number
+          size?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
