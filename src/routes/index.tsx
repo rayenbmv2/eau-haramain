@@ -139,6 +139,8 @@ function drinkSizeBucket(size: string): DrinkSize {
 
 function Home() {
   const { data: products } = useSuspenseQuery(productsQO);
+  const { data: allPromotions } = useSuspenseQuery(promotionsQO);
+  const promotions = allPromotions.filter((p) => p.active);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
 
