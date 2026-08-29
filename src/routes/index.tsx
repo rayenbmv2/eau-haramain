@@ -6,7 +6,7 @@ import { listProducts } from "@/lib/products.functions";
 import { ProductCard } from "@/components/product-card";
 import { PromoCard } from "@/components/promo-card";
 import { PromoCountdown } from "@/components/promo-countdown";
-import { PROMOTIONS } from "@/lib/promotions";
+import { listPromotions } from "@/lib/promotions.functions";
 import {
   SITE,
   GROUPS,
