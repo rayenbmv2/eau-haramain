@@ -23,6 +23,11 @@ const productsQO = queryOptions({
   queryFn: () => listProducts(),
 });
 
+const promotionsQO = queryOptions({
+  queryKey: ["promotions"],
+  queryFn: () => listPromotions(),
+});
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
