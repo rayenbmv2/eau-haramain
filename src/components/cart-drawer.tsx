@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
-import { ShoppingBag, X, Trash2, Minus, Plus } from "lucide-react";
-import { WhatsAppIcon } from "@/components/whatsapp-icon";
+import { ShoppingBag, X, Trash2, Minus, Plus, Construction } from "lucide-react";
 import {
   useCart,
   cartTotal,
   cartCount,
-  buildOrderMessage,
 } from "@/lib/cart";
-import { waUrl } from "@/lib/site";
+import { SITE } from "@/lib/site";
 
 export function CartFab() {
   const [mounted, setMounted] = useState(false);
@@ -17,7 +15,6 @@ export function CartFab() {
 
   const count = cartCount(items);
   const total = cartTotal(items);
-  const belowMin = count > 0 && count < 10;
 
   return (
     <>
@@ -34,26 +31,8 @@ export function CartFab() {
             </span>
           </span>
           <span className="text-sm font-bold tabular-nums">{total.toFixed(3)} TND</span>
-          {belowMin && (
-            <span className="rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-amber-950">
-              Min 10
-            </span>
-          )}
-
         </button>
-      ) : (
-        mounted && (
-          <a
-            href={waUrl("Bonjour, j'ai une question.")}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Contact WhatsApp"
-            className="fixed bottom-5 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--whatsapp)] text-[var(--whatsapp-foreground)] shadow-soft transition hover:scale-110 sm:bottom-7 sm:right-7"
-          >
-            <WhatsAppIcon size={28} />
-          </a>
-        )
-      )}
+      ) : null}
       {open && <CartPanel onClose={() => setOpen(false)} />}
     </>
   );
