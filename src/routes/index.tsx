@@ -63,7 +63,6 @@ export const Route = createFileRoute("/")({
           name: SITE.brand,
           alternateName: SITE.brandEn,
           url: "https://aqua-dash-tunisia.lovable.app/",
-          telephone: `+${SITE.whatsappRaw}`,
           areaServed: SITE.areas,
           address: {
             "@type": "PostalAddress",

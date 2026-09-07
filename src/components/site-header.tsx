@@ -86,11 +86,7 @@ export function SiteFooter() {
         </div>
         <div>
           <p className="text-sm font-semibold">Contact</p>
-          <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-            <li>WhatsApp : {SITE.phoneDisplay}</li>
-            <li>Téléphone : {SITE.phoneDisplay}</li>
-            <li>{SITE.hours}</li>
-          </ul>
+          <p className="mt-2 text-sm text-muted-foreground">{SITE.closedMessage}</p>
         </div>
         <div>
           <p className="text-sm font-semibold">Zones de livraison</p>
