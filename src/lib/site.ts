@@ -2,15 +2,15 @@ export const SITE = {
   brand: "شركة الحرمين",
   brandEn: "Al Haramain",
   tagline: "Livraison rapide d'eau et boissons",
-  whatsappRaw: "21699185506",
-  phoneDisplay: "+216 99 185 506",
   hours: "Lun – Dim · 7h00 – 22h00",
   mapsUrl: "https://maps.app.goo.gl/Eujewh9NhAmQzVqB7",
   areas: ["Mourouj"],
+  closedMessage:
+    "Le site est actuellement en maintenance. Les commandes sont suspendues. Nous reviendrons bientôt.",
 };
 
-export function waUrl(text: string) {
-  return `https://wa.me/${SITE.whatsappRaw}?text=${encodeURIComponent(text)}`;
+export function waUrl(_text: string) {
+  return "#";
 }
 
 export const genericOrderMessage = `Bonjour, je souhaite passer une commande :
