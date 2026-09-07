@@ -43,32 +43,9 @@ function CartPanel({ onClose }: { onClose: () => void }) {
   const setQty = useCart((s) => s.setQty);
   const remove = useCart((s) => s.remove);
   const clear = useCart((s) => s.clear);
-  const customer = useCart((s) => s.customer);
-  const setCustomer = useCart((s) => s.setCustomer);
-
-  const [touched, setTouched] = useState(false);
 
   const total = cartTotal(items);
   const count = cartCount(items);
-  const MIN_ITEMS = 10;
-  const missing = Math.max(0, MIN_ITEMS - count);
-  const meetsMin = count >= MIN_ITEMS;
-  const valid =
-    customer.name.trim() &&
-    customer.phone.trim() &&
-    customer.address.trim() &&
-    items.length > 0 &&
-    meetsMin;
-
-  const message = buildOrderMessage(customer, items);
-
-
-  function order(e: React.MouseEvent) {
-    setTouched(true);
-    if (!valid) {
-      e.preventDefault();
-    }
-  }
 
   return (
     <div className="fixed inset-0 z-[60] flex justify-end bg-foreground/50 backdrop-blur-sm" onClick={onClose}>
@@ -142,35 +119,6 @@ function CartPanel({ onClose }: { onClose: () => void }) {
               ))}
             </ul>
           )}
-
-          {items.length > 0 && (
-            <div className="mt-6 space-y-3">
-              <h3 className="text-sm font-bold">Vos informations</h3>
-              <Field
-                label="Nom complet"
-                value={customer.name}
-                onChange={(v) => setCustomer({ name: v })}
-                error={touched && !customer.name.trim()}
-                placeholder="Ahmed Ben Ali"
-              />
-              <Field
-                label="Téléphone"
-                value={customer.phone}
-                onChange={(v) => setCustomer({ phone: v })}
-                error={touched && !customer.phone.trim()}
-                placeholder="22 123 456"
-                type="tel"
-              />
-              <Field
-                label="Adresse de livraison"
-                value={customer.address}
-                onChange={(v) => setCustomer({ address: v })}
-                error={touched && !customer.address.trim()}
-                placeholder="Rue, ville (Ben Arous…)"
-                textarea
-              />
-            </div>
-          )}
         </div>
 
         {items.length > 0 && (
@@ -183,44 +131,22 @@ function CartPanel({ onClose }: { onClose: () => void }) {
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">Quantité</span>
-              <span
-                className={`font-bold tabular-nums ${
-                  meetsMin ? "text-emerald-600" : "text-amber-600"
-                }`}
-              >
-                {count} / {MIN_ITEMS} minimum
+              <span className="font-bold tabular-nums text-muted-foreground">
+                {count}
               </span>
             </div>
-            {!meetsMin && (
-              <div className="rounded-xl border border-amber-400/50 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
-                Commande minimum: {MIN_ITEMS} bouteilles. Ajoutez encore{" "}
-                {missing} article{missing > 1 ? "s" : ""}.
+            <div className="rounded-xl border border-amber-400/50 bg-amber-50 px-3 py-3 text-xs font-medium text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+              <div className="flex items-start gap-2">
+                <Construction className="mt-0.5 h-4 w-4 shrink-0" />
+                {SITE.closedMessage}
               </div>
-            )}
-            <p className="text-[11px] text-muted-foreground">
-              Frais de livraison à confirmer sur WhatsApp.
-            </p>
-            <a
-              href={valid ? waUrl(message) : "#"}
-              onClick={order}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-base font-semibold shadow-soft transition ${
-                valid
-                  ? "bg-[var(--whatsapp)] text-[var(--whatsapp-foreground)] hover:opacity-95"
-                  : "cursor-not-allowed bg-muted text-muted-foreground"
-              }`}
+            </div>
+            <button
+              disabled
+              className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-muted px-4 py-3.5 text-base font-semibold text-muted-foreground shadow-soft"
             >
-              <WhatsAppIcon size={20} />
-              Commander sur WhatsApp
-            </a>
-            {touched && !valid && (
-              <p className="text-xs text-destructive">
-                {!meetsMin
-                  ? `Minimum ${MIN_ITEMS} bouteilles requis.`
-                  : "Veuillez remplir nom, téléphone et adresse."}
-              </p>
-            )}
+              Commandes suspendues
+            </button>
 
             <button
               onClick={() => {
